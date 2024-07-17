@@ -15,6 +15,7 @@ import org.springframework.context.annotation.PropertySource
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.RequestParam
 import java.time.Instant
 import java.util.*
 
@@ -31,8 +32,8 @@ class MemberService(
     val logger = logger()
 
     @Transactional(readOnly = true)
-    fun login(email: String, password: String): TokenDTO {
-        val member: Member = memberRepository.findByEmail(email)
+    fun login(email: String?, password: String?): TokenDTO {
+        val member: Member = memberRepository.findByEmail(email!!)
             .takeIf { passwordEncoder.matches(password, it?.password) }
             ?: throw IllegalArgumentException("아이디 또는 번호가 일치하지 않습니다.")
 

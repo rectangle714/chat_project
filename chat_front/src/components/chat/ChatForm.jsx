@@ -23,7 +23,6 @@ const ChatForm = () => {
           senderName: "blue",
           message: message,
         };
-
         appendMessageTag('left', 'User', message);
         // resive(data);
     }
@@ -37,7 +36,6 @@ const ChatForm = () => {
         if (chatRef.current) {
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
         }
-
     }, [messages]);
 
     return (

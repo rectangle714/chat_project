@@ -11,7 +11,7 @@
 }
 
 .chat_wrap .chat ul{
-    width: 100%;
+    /* width: 100%; */
     list-style: none;
 }
 
@@ -30,7 +30,7 @@
     font-size: 13px;
 }
 .chat_wrap .chat ul li > div.sender{
-    margin: 10px 20px 20px;
+    margin: 5px 20px;
     font-weight: bold;
 }
 .chat_wrap .chat ul li > div.message{

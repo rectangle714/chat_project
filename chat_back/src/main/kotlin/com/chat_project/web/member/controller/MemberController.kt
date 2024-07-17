@@ -33,7 +33,7 @@ class MemberController(
 
     @Operation(method = "POST", summary = "사용자 로그인", description = "사용자 로그인 API")
     @PostMapping("/login")
-    fun login(email: String, password: String) : ResponseEntity<TokenDTO>
+    fun login(email: String?, password: String?) : ResponseEntity<TokenDTO>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.login(email, password))
 
     @Operation(method = "POST", summary = "사용자 로그아웃", description = "사용자 로그아웃 API")
