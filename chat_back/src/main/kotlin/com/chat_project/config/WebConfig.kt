@@ -9,7 +9,7 @@ class WebConfig(): WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
             .allowedOriginPatterns("*")
-            .allowedMethods("GET", "POST")
+            .allowedMethods("GET", "POST", "OPTION")
             .allowCredentials(true);    // 쿠키 인증 요청 허용
     }
 }

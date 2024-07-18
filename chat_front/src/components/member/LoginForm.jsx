@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../store/AuthProvider';
+import api from '../../store/api';
 import './LoginForm.css';
 
 const LoginForm = () => {
@@ -8,6 +9,7 @@ const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [validation, setValidation] = useState('');
+    const { login } = useAuth();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -21,18 +23,14 @@ const LoginForm = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:30001/member/login',null, {
+            const response = await api.post('/member/login', null, {
                 params: {
                     email: email,
                     password: password
                 }
             });
-            const accessToken = response.data.accessToken;
-            const accessTokenExpiration = response.data.accessTokenExpiration;
-            const refreshToken = response.data.refreshToken;
-            const refreshTokenExpiration = response.data.refreshTokenExpiration;
-
-            setValidation('');
+            login(response.data.accessToken, response.data.accessTokenExpiration,
+                     response.data.refreshToken, response.data.refreshTokenExpiration);
             navigate('/chat');
         } catch(error) {
             setValidation(error.response.data.message);
@@ -63,7 +61,9 @@ const LoginForm = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        <button type="submit" className="login-button">Login</button>
+                        <div className="form-group" style={{paddingLeft:'20px'}}>
+                            <button type="submit" className="login-button">Login</button>
+                        </div>
                         <div style={{
                             textAlign: 'center',
                             marginTop: '20px'

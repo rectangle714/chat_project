@@ -4,6 +4,7 @@ import com.chat_project.common.util.logger
 import com.chat_project.common.util.RedisUtil
 import com.chat_project.exception.CustomException
 import com.chat_project.exception.CustomExceptionCode
+import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -30,7 +31,7 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain
     ) {
         try {
-            val token = tokenProvider.parseBearerToken(request.getHeader(HttpHeaders.AUTHORIZATION))
+            val token = tokenProvider.parseBearerToken(request.getHeader("AUTHORIZATION"));
             val user = tokenProvider.parseTokenInfo(token)
             if(Objects.nonNull(redisUtil.getData(user.username))) {
                 UsernamePasswordAuthenticationToken.authenticated(user, token, user.authorities)
@@ -38,6 +39,18 @@ class JwtAuthenticationFilter(
                     .also { SecurityContextHolder.getContext().authentication = it }
             } else {
                 throw CustomException(CustomExceptionCode.BAD_TOKEN_INFO)
+            }
+        } catch(e: ExpiredJwtException) {
+            val refreshToken: String? = tokenProvider.parseBearerToken(request.getHeader("REFRESH_TOKEN"));
+            if(refreshToken != null) {
+                val user = tokenProvider.parseTokenInfo(refreshToken)
+                if(Objects.nonNull(redisUtil.getData(user.username))) {
+                    UsernamePasswordAuthenticationToken.authenticated(user, refreshToken, user.authorities)
+                        .apply { details = WebAuthenticationDetails(request) }
+                        .also { SecurityContextHolder.getContext().authentication = it }
+                } else {
+                    throw CustomException(CustomExceptionCode.BAD_TOKEN_INFO)
+                }
             }
         } catch (e: Exception) {
             // 예외 발생 시 ExceptionHandler에서 처리한다.

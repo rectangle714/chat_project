@@ -1,10 +1,54 @@
 import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../store/AuthProvider';
+import * as StompJs from "@stomp/stompjs";
 import "./ChatForm.css";
 
 const ChatForm = () => {
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
     const chatRef = useRef(null);
+    const { accessToken } = useAuth();
+    const [client, setClient] = useState(null);
+
+    const connection = () => {
+        try{
+            const clientData = new StompJs.Client({
+                brokerURL: 'ws://localhost:30001/ws',
+                connectHeaders: {
+                    Authorization : accessToken
+                },
+                debug: function(val) {
+                    console.log(val);
+                },
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000
+            });
+    
+            clientData.onConnect = function() {
+                clientData.subscribe('/sub/chat/room/' + 1, callback);
+                // clientData.subscribe('/sub/chat/room/' + chatroomId, callback);
+            };
+    
+            clientData.activate();
+            setClient(clientData);
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+    const disConnection = () => {
+        if(client === null) { return; }
+        client.deactivate();
+    }
+
+
+    const callback = function(message) {
+        if(message.body) {
+            const msg = JSON.parse(message.body);
+            console.log(msg);
+        }
+    }
 
     const handleEnter = (e) => {
         if (e.key === "Enter") {
@@ -19,10 +63,18 @@ const ChatForm = () => {
     };
 
     const sendMessage = (message) => {
-        const data = {
-          senderName: "blue",
-          message: message,
-        };
+        if(messages === '') { return; }
+        
+        client.publish({
+            destination: '/pub/message',
+            body: JSON.stringify({
+                "chatRoomId" : 1,
+                "chatRoomName" : "test",
+                "chatType" : "SEND",
+                "message" : message
+            })
+        })
+
         appendMessageTag('left', 'User', message);
         // resive(data);
     }
