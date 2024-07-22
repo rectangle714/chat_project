@@ -27,8 +27,8 @@ class RedisSubscriber(
             val publishMessage: String = redisTemplate.stringSerializer.deserialize(message.body) as String
             val chatDTO: ChatDTO = objectMapper.readValue(publishMessage, ChatDTO::class.java)
 
-            messagingTemplate.convertAndSend("/sub/chat/room/"+ chatDTO.chatRoomId, chatDTO)
-
+            messagingTemplate.convertAndSend("/sub/chat/room/"+ chatDTO.chatRoomId,
+                                                mapOf("sender" to chatDTO.sender, "message" to chatDTO.message))
         } catch(e: Exception) {
             logger.error("채팅 에러 발생 : {}",e.message)
         }

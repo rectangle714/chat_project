@@ -31,7 +31,7 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain
     ) {
         try {
-            val token = tokenProvider.parseBearerToken(request.getHeader("AUTHORIZATION"));
+            val token = tokenProvider.parseBearerToken(request.getHeader("Authorization"));
             val user = tokenProvider.parseTokenInfo(token)
             if(Objects.nonNull(redisUtil.getData(user.username))) {
                 UsernamePasswordAuthenticationToken.authenticated(user, token, user.authorities)

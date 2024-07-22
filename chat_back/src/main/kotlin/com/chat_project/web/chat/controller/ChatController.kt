@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 @Tag(
     name = "채팅 API",
     description = "채팅 관련 전체 API ( 소켓 통신으로 작업 하는 내용 테스트 API )"

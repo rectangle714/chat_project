@@ -1,24 +1,40 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../store/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+import api from '../../store/api';
 import * as StompJs from "@stomp/stompjs";
 import "./ChatForm.css";
 
 const ChatForm = () => {
+    const URL = process.env.REACT_APP_WS_URL;
+    const navigate = useNavigate();
+    const { accessToken, reissue } = useAuth();
+    const chatRef = useRef(null);
+    const [member, setMember] = useState({email: '', nickname: ''});
+
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
-    const chatRef = useRef(null);
-    const { accessToken } = useAuth();
     const [client, setClient] = useState(null);
+
+    const getMember = async() => {
+        try {
+            const response = await api.get('/api/member/info', null);
+            setMember({email: response.data.email, nickname: response.data.nickname});
+        } catch(error) {
+            console.log('error ', error);
+            navigate('/login');
+        }
+    }
 
     const connection = () => {
         try{
             const clientData = new StompJs.Client({
-                brokerURL: 'ws://localhost:30001/ws',
+                brokerURL: `ws://${URL}/ws`,
                 connectHeaders: {
                     Authorization : accessToken
                 },
                 debug: function(val) {
-                    console.log(val);
+                    // console.log('val ',val);
                 },
                 reconnectDelay: 5000,
                 heartbeatIncoming: 4000,
@@ -27,7 +43,6 @@ const ChatForm = () => {
     
             clientData.onConnect = function() {
                 clientData.subscribe('/sub/chat/room/' + 1, callback);
-                // clientData.subscribe('/sub/chat/room/' + chatroomId, callback);
             };
     
             clientData.activate();
@@ -46,7 +61,9 @@ const ChatForm = () => {
     const callback = function(message) {
         if(message.body) {
             const msg = JSON.parse(message.body);
-            console.log(msg);
+            if(msg.sender != member.nickname) {
+                appendMessageTag('right', msg.sender, msg.message);
+            }
         }
     }
 
@@ -71,11 +88,12 @@ const ChatForm = () => {
                 "chatRoomId" : 1,
                 "chatRoomName" : "test",
                 "chatType" : "SEND",
-                "message" : message
+                "message" : message,
+                "accessToken" : accessToken
             })
         })
 
-        appendMessageTag('left', 'User', message);
+        appendMessageTag('left', member.nickname, message);
         // resive(data);
     }
 
@@ -85,10 +103,24 @@ const ChatForm = () => {
     };
 
     useEffect(() => {
-        if (chatRef.current) {
-            chatRef.current.scrollTop = chatRef.current.scrollHeight;
-        }
+        scrollToBottom();
     }, [messages]);
+
+    const scrollToBottom = () => {
+        if(chatRef.current) {
+            const { scrollHeight, clientHeight } = chatRef.current;
+            chatRef.current.scrollTop = chatRef.current.scrollTop + scrollHeight;
+        }
+    }
+
+    useEffect(() => {
+        if(accessToken != null) {
+            getMember();
+            connection();
+        } else {
+            reissue();
+        }
+    }, [])
 
     return (
         <div className="chat_wrap">

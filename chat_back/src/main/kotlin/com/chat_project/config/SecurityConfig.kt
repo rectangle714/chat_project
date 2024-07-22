@@ -30,8 +30,8 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .exceptionHandling { it.authenticationEntryPoint(entryPoint) }
             .authorizeHttpRequests {
-                it.requestMatchers("/manager/**").hasAnyRole("MANAGER","ADMIN")
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                it.requestMatchers("/api/manager/**").hasAnyRole("MANAGER","ADMIN")
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .requestMatchers(*allowedUrls).permitAll()
                     .anyRequest().authenticated()
             }

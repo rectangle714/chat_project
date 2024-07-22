@@ -29,7 +29,8 @@ class StompHandler(
         val accessor: StompHeaderAccessor = StompHeaderAccessor.wrap(message)
 
         if(StompCommand.CONNECT == accessor.command) {
-            logger.info("socket connect")
+            logger.info("Socket Connect")
+
             val token: String? = accessor.getFirstNativeHeader("Authorization")
             if(token.isNullOrEmpty()) {
                 throw CustomException(CustomExceptionCode.BAD_TOKEN_INFO)
@@ -43,7 +44,7 @@ class StompHandler(
                 }
             }
         } else if(StompCommand.DISCONNECT == accessor.command) {
-            logger.info("socket disconnect")
+            logger.info("Socket Disconnect")
         }
 
         return message

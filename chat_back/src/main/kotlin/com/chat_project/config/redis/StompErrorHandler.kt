@@ -23,7 +23,6 @@ class StompErrorHandler(): StompSubProtocolErrorHandler() {
 
     private fun prepareErrorMessage (error: String?): Message<ByteArray> {
         val accessor: StompHeaderAccessor = StompHeaderAccessor.create(StompCommand.ERROR)
-
         accessor.message = error
         accessor.setLeaveMutable(true)
 

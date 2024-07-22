@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/member")
 @Tag(name = "사용자 API", description = "사용자 관련 전체 API")
 class MemberController(
     private val memberService: MemberService,

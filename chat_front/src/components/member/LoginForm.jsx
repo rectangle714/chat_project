@@ -23,7 +23,7 @@ const LoginForm = () => {
         }
 
         try {
-            const response = await api.post('/member/login', null, {
+            const response = await api.post('/api/member/login', null, {
                 params: {
                     email: email,
                     password: password

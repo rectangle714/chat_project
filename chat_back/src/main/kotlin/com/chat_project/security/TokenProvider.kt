@@ -62,5 +62,4 @@ class TokenProvider(
                 ?: "anonymous:anonymous"
             ).split(":")
         .let { User(it[0], "", listOf(SimpleGrantedAuthority(it[1]))) }
-
 }

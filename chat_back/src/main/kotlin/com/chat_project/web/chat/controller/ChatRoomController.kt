@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/chatRoom")
+@RequestMapping("/api/chatRoom")
 @Tag(name = "채팅방 API", description = "채팅방 관련 전체 API" )
 class ChatRoomController(
     private val chatRoomService: ChatRoomService
