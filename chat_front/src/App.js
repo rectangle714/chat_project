@@ -8,9 +8,9 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginForm/>}></Route>
-          <Route path="/chat" element={<ChatForm/>}></Route>
-          <Route path="*" element={<LoginForm/>}></Route>
+          <Route path="/login" element={<LoginForm />}/>
+          <Route path="/chat" element={<ChatForm /> } />
+          <Route path="*" element={<LoginForm />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

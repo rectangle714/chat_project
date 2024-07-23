@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../store/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import api from '../../store/api';
 import * as StompJs from "@stomp/stompjs";
 import "./ChatForm.css";
@@ -9,20 +9,39 @@ const ChatForm = () => {
     const URL = process.env.REACT_APP_WS_URL;
     const navigate = useNavigate();
     const { accessToken, reissue } = useAuth();
-    const chatRef = useRef(null);
+    const chatEndRef = useRef(null);
     const [member, setMember] = useState({email: '', nickname: ''});
 
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
     const [client, setClient] = useState(null);
 
+    // 사용자 정보 조회
     const getMember = async() => {
         try {
             const response = await api.get('/api/member/info', null);
-            setMember({email: response.data.email, nickname: response.data.nickname});
+            setMember((prevMember) => {
+                prevMember.email = response.data.email;
+                prevMember.nickname = response.data.nickname;
+                return prevMember;
+              });
         } catch(error) {
             console.log('error ', error);
             navigate('/login');
+        }
+    }
+
+    // 채팅목록 조회
+    const getChatting = async() => {
+        try {
+            const response = await api.get('/api/chat/list', {
+                params : {
+                    chatRoomId : 1
+                }
+            });
+            console.log('response: ',response);
+        } catch(error) {
+            console.log(error);
         }
     }
 
@@ -52,19 +71,20 @@ const ChatForm = () => {
         }
     }
 
-    const disConnection = () => {
-        if(client === null) { return; }
-        client.deactivate();
-    }
-
-
     const callback = function(message) {
         if(message.body) {
             const msg = JSON.parse(message.body);
             if(msg.sender != member.nickname) {
                 appendMessageTag('right', msg.sender, msg.message);
+            } else {
+                appendMessageTag('left', msg.sender, msg.message);
             }
         }
+    }
+
+    const disConnection = () => {
+        if(client === null) { return; }
+        client.deactivate();
     }
 
     const handleEnter = (e) => {
@@ -92,9 +112,6 @@ const ChatForm = () => {
                 "accessToken" : accessToken
             })
         })
-
-        appendMessageTag('left', member.nickname, message);
-        // resive(data);
     }
 
     const appendMessageTag = (LR_className, senderName, message) => {
@@ -103,29 +120,23 @@ const ChatForm = () => {
     };
 
     useEffect(() => {
-        scrollToBottom();
+        chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
-    const scrollToBottom = () => {
-        if(chatRef.current) {
-            const { scrollHeight, clientHeight } = chatRef.current;
-            chatRef.current.scrollTop = chatRef.current.scrollTop + scrollHeight;
-        }
-    }
 
     useEffect(() => {
         if(accessToken != null) {
             getMember();
+            getChatting();
             connection();
         } else {
-            reissue();
+            navigate('/login');
         }
     }, [])
 
     return (
         <div className="chat_wrap">
             <div className="header">CHAT</div>
-            <div className="chat" ref={chatRef}>
+            <div className="chat">
                 <div className="chatformat">
                     <ul>
                         {messages.map((msg, index) => (
@@ -139,6 +150,7 @@ const ChatForm = () => {
                             </li>
                         ))}
                     </ul>
+                    <div ref={chatEndRef}></div>
                 </div>
             </div>
             <div className="input-div">
