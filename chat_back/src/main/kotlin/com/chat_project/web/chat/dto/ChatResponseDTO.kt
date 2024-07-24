@@ -6,5 +6,5 @@ data class ChatResponseDTO(
     val chatId: Long? = 0,
     var message: String = "",
     var sender: String = "",
-    var registerDate : LocalDateTime = LocalDateTime.now()
+    var registerDate : String = ""
 )
