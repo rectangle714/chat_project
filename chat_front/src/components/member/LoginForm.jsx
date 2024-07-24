@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../store/AuthProvider';
-import api from '../../store/api';
-import './LoginForm.css';
+import { useAuth } from '@stores/authProvider';
+import api from '@stores/api';
+import '@styles/member/LoginForm.css';
 
 const LoginForm = () => {
     const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { AuthProvider } from './AuthProvider';
+import { AuthProvider } from './authProvider';
 
 // Axios 인스턴스 생성
 const api = axios.create({

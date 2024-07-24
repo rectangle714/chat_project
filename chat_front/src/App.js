@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './store/AuthProvider';
-import ChatForm from './components/chat/ChatForm';
-import LoginForm from './components/member/LoginForm';
+import { AuthProvider } from '@stores/authProvider';
+import ChatForm from '@components/chat/ChatForm';
+import LoginForm from '@components/member/LoginForm';
 
 function App() {
   return (

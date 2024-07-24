@@ -1,7 +1,7 @@
 package com.chat_project.config.redis
 
 import com.chat_project.common.util.logger
-import com.chat_project.web.chat.dto.ChatDTO
+import com.chat_project.web.chat.dto.ChatRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.data.redis.connection.Message
 import org.springframework.data.redis.connection.MessageListener
@@ -25,10 +25,10 @@ class RedisSubscriber(
     override fun onMessage(message: Message, pattern: ByteArray?) {
         try {
             val publishMessage: String = redisTemplate.stringSerializer.deserialize(message.body) as String
-            val chatDTO: ChatDTO = objectMapper.readValue(publishMessage, ChatDTO::class.java)
+            val chatRequestDTO: ChatRequestDTO = objectMapper.readValue(publishMessage, ChatRequestDTO::class.java)
 
-            messagingTemplate.convertAndSend("/sub/chat/room/"+ chatDTO.chatRoomId,
-                                                mapOf("sender" to chatDTO.sender, "message" to chatDTO.message))
+            messagingTemplate.convertAndSend("/sub/chat/room/"+ chatRequestDTO.chatRoomId,
+                                                mapOf("sender" to chatRequestDTO.sender, "message" to chatRequestDTO.message))
         } catch(e: Exception) {
             logger.error("채팅 에러 발생 : {}",e.message)
         }

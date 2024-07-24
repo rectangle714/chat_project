@@ -5,7 +5,7 @@ import com.chat_project.common.util.logger
 import com.chat_project.exception.CustomException
 import com.chat_project.exception.CustomExceptionCode
 import com.chat_project.security.TokenProvider
-import com.chat_project.web.chat.dto.ChatDTO
+import com.chat_project.web.chat.dto.ChatRequestDTO
 import com.chat_project.web.chat.entity.Chat
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
@@ -33,28 +33,28 @@ class MessageService(
     private val modelMapper: ModelMapper,
     private val tokenProvider: TokenProvider
 ) {
-    fun sendMessage(chatDTO: ChatDTO) {
-        val user = tokenProvider.parseTokenInfo(chatDTO.accessToken);
-        val chatRoom: ChatRoom = chatDTO.chatRoomId
+    fun sendMessage(ChatRequestDTO: ChatRequestDTO) {
+        val user = tokenProvider.parseTokenInfo(ChatRequestDTO.accessToken);
+        val chatRoom: ChatRoom = ChatRequestDTO.chatRoomId
                                     ?.let { chatRoomRepository.findById(it).get() }
                                     ?: throw CustomException(CustomExceptionCode.CHAT_ROOM_NOT_FOUND)
         val member: Member =  user.username
                                 .let { memberRepository.findByEmail(it) }
                                 ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
 
-        if(chatDTO.chatType == ChatType.ENTER.name) {
+        if(ChatRequestDTO.chatType == ChatType.ENTER.name) {
             logger().info("채팅방 입장")
             chatRoomMateRepository.save(ChatRoomMember(member, chatRoom))
-            chatDTO.message = member.nickname + "님이 입장했습니다."
-        } else if(chatDTO.chatType == ChatType.SEND.name) {
+            ChatRequestDTO.message = member.nickname + "님이 입장했습니다."
+        } else if(ChatRequestDTO.chatType == ChatType.SEND.name) {
             logger().info("채팅 발송")
-            chatDTO.sender = member.nickname
+            ChatRequestDTO.sender = member.nickname
         }
 
-        val chat: Chat = Chat(chatDTO.message, member, chatRoom);
+        val chat: Chat = Chat(ChatRequestDTO.message, member, chatRoom);
         chatRepository.save(chat)
 
         redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(String::class.java)
-        redisTemplate.convertAndSend(channelTopic.topic, chatDTO)
+        redisTemplate.convertAndSend(channelTopic.topic, ChatRequestDTO)
     }
 }

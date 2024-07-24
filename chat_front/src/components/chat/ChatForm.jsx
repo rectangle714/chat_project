@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../store/AuthProvider';
-import { useNavigate, Navigate } from 'react-router-dom';
-import api from '../../store/api';
+import { useAuth } from '@stores/authProvider';
+import { useNavigate } from 'react-router-dom';
 import * as StompJs from "@stomp/stompjs";
-import "./ChatForm.css";
+import api from '@stores/api';
+import "@styles/chat/ChatForm.css";
+import logout from '@assets/images/logout.png'
 
 const ChatForm = () => {
     const URL = process.env.REACT_APP_WS_URL;
     const navigate = useNavigate();
-    const { accessToken, reissue } = useAuth();
+    const { accessToken } = useAuth();
     const chatEndRef = useRef(null);
     const [member, setMember] = useState({email: '', nickname: ''});
 
@@ -24,7 +25,10 @@ const ChatForm = () => {
                 prevMember.email = response.data.email;
                 prevMember.nickname = response.data.nickname;
                 return prevMember;
-              });
+            });
+
+            getChatting();
+            connection();
         } catch(error) {
             console.log('error ', error);
             navigate('/login');
@@ -39,12 +43,21 @@ const ChatForm = () => {
                     chatRoomId : 1
                 }
             });
-            console.log('response: ',response);
+
+            const chatArray = response.data;
+            chatArray.forEach(chat => {
+                if(chat.sender != member.nickname) {
+                    appendMessageTag('left', chat.sender, chat.message);
+                } else {
+                    appendMessageTag('right', chat.sender, chat.message);
+                }
+            });
         } catch(error) {
             console.log(error);
         }
     }
 
+    /* 웹소켓 연결 */
     const connection = () => {
         try{
             const clientData = new StompJs.Client({
@@ -75,9 +88,9 @@ const ChatForm = () => {
         if(message.body) {
             const msg = JSON.parse(message.body);
             if(msg.sender != member.nickname) {
-                appendMessageTag('right', msg.sender, msg.message);
-            } else {
                 appendMessageTag('left', msg.sender, msg.message);
+            } else {
+                appendMessageTag('right', msg.sender, msg.message);
             }
         }
     }
@@ -87,26 +100,13 @@ const ChatForm = () => {
         client.deactivate();
     }
 
-    const handleEnter = (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            setTextareaValue('');
-            sendMessage(textareaValue);
-        }
-    };
-
-    const handleChange = (event) => {
-        setTextareaValue(event.target.value);
-    };
-
     const sendMessage = (message) => {
-        if(messages === '') { return; }
+        if(message == '') { return false; }
         
         client.publish({
             destination: '/pub/message',
             body: JSON.stringify({
                 "chatRoomId" : 1,
-                "chatRoomName" : "test",
                 "chatType" : "SEND",
                 "message" : message,
                 "accessToken" : accessToken
@@ -119,6 +119,23 @@ const ChatForm = () => {
         setMessages(prevMessages => [...prevMessages, newMessage]);
     };
 
+    const handleEnter = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            setTextareaValue('');
+            sendMessage(textareaValue);
+        }
+    };
+
+    const handleChange = (e) => { setTextareaValue(e.target.value); };
+
+    const handleClick = (e) => {
+        if(window.confirm('채팅방을 나가시겠습니까?')) {
+            disConnection();
+            navigate('/login');
+        }
+    }
+
     useEffect(() => {
         chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -126,8 +143,6 @@ const ChatForm = () => {
     useEffect(() => {
         if(accessToken != null) {
             getMember();
-            getChatting();
-            connection();
         } else {
             navigate('/login');
         }
@@ -135,7 +150,10 @@ const ChatForm = () => {
 
     return (
         <div className="chat_wrap">
-            <div className="header">CHAT</div>
+            <div className="header">
+                    <span style={{flex:2}}>CHAT</span>
+                    <span style={{textAlign:'right'}}><img src={logout} alt='logout image' onClick={handleClick} className={'logout_img'}/></span>
+            </div>
             <div className="chat">
                 <div className="chatformat">
                     <ul>

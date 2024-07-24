@@ -11,8 +11,9 @@ export const AuthProvider = ({ children }) => {
     const login = (accessToken, accessTokenExpired, refreshToken, refreshTokenExpired) => {
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
-        Cookies.set('accessToken', accessToken, { expires: accessTokenExpired, path: '/' });
-        Cookies.set('refreshToken', refreshToken, { expires: refreshTokenExpired, path: '/' });
+        const currentTime = new Date().getTime();
+        Cookies.set('accessToken', accessToken, { expires: new Date(accessTokenExpired * 1000).getTime() - currentTime, path: '/' });
+        Cookies.set('refreshToken', refreshToken, { expires: new Date(refreshTokenExpired * 1000).getTime() - currentTime, path: '/' });
     }
 
     const logout = () => {
