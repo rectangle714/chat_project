@@ -30,9 +30,10 @@
     list-style: none;
 }
 
-.chat_wrap .chatul li{
+.chat_wrap .chat ul li{
     width: 100%;
 }
+
 .chat_wrap .chat ul li.left{
     text-align: left;
 }
@@ -44,10 +45,12 @@
 .chat_wrap .chat ul li > div{
     font-size: 13px;
 }
+
 .chat_wrap .chat ul li > div.sender{
     margin: 5px 20px;
     font-weight: bold;
 }
+
 .chat_wrap .chat ul li > div.message{
     display: inline-block;
     word-break: break-all;

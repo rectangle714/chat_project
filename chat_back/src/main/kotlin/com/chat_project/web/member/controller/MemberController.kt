@@ -43,7 +43,7 @@ class MemberController(
 
     @Operation(method = "POST", summary = "토큰 재발급", description = "REFRESH 토큰 재발급 API")
     @PostMapping("/reissue")
-    fun reissue(@RequestHeader("RefreshToken") refreshToken: String): ResponseEntity<TokenDTO>
+    fun reissue(@RequestHeader("REFRESH_TOKEN") refreshToken: String): ResponseEntity<TokenDTO>
         = ResponseEntity.ok(memberService.reissue(refreshToken))
 
     @Operation(method = "GET", summary = "사용자 정보 조회 API")

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@stores/authProvider';
-import api from '@stores/api';
+import axios from 'axios';
 import '@styles/member/LoginForm.css';
 
 const LoginForm = () => {
@@ -22,8 +22,9 @@ const LoginForm = () => {
             return;
         }
 
+        const URL = process.env.REACT_APP_API_URL;
         try {
-            const response = await api.post('/api/member/login', null, {
+            const response = await axios.post(URL+'/api/member/login', null, {
                 params: {
                     email: email,
                     password: password
@@ -31,7 +32,7 @@ const LoginForm = () => {
             });
             login(response.data.accessToken, response.data.accessTokenExpiration,
                      response.data.refreshToken, response.data.refreshTokenExpiration);
-            navigate('/chat');
+            navigate('/chatroom');
         } catch(error) {
             setValidation(error.response.data.message);
         }

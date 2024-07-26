@@ -1,31 +1,29 @@
-const ChatRoomList = () => {
+const ChatRoomList = (props) => {
+
+    // 테스트 데이터
+    const chatRooms = [
+        { id: 1, name: '테스트 1', lastMessage: 'ㄴㅇㅁㄴㅇㅁㄴㅇ', avatar: 'https://via.placeholder.com/50' },
+        { id: 2, name: '테스트 2', lastMessage: '?????????????', avatar: 'https://via.placeholder.com/50' },
+        { id: 3, name: '테스트 3', lastMessage: 'ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ', avatar: 'https://via.placeholder.com/50' },
+        { id: 4, name: '테스트 4', lastMessage: 'ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ', avatar: 'https://via.placeholder.com/50' },
+        { id: 5, name: '테스트 5', lastMessage: 'ㅇㅇㅇㅇㅇㅇㅇㅇㅇ', avatar: 'https://via.placeholder.com/50' },
+    ];
 
     return (
         <>
-        <section className="p-3 size-full flex flex-col gap-3 overflow-y-scroll scrollbar-hide">
-          <h3 className="sr-only">채팅방 리스트</h3>
-          {chatList.length > 0 ? (
-            chatList.map((item) => {
-              return (
-                <ChatRoomCard
-                  key={item.id}
-                  item={item}
-                  me={userId}
-                  opener={handleOpenChatRoom(item.id)}
-                  pb={pb}
-                />
-              );
-            })
-          ) : (
-            <span className="grid place-items-center h-4/5">
-              대화중인 상대가 없습니다
-            </span>
-          )}
-        </section>
-        {chatRoom.length > 0 && (
-          <ChatRoom closer={handleCloseChatRoom} chatRoomId={chatRoom} me={userId} pb={pb} />
-        )}
-      </>
-    )
+            <ul>
+                {chatRooms.map(room => (
+                    <li key={room.id} className="chat-room">
+                        <img src={room.avatar} alt={`${room.name} avatar`} />
+                        <div className="chat-room-info">
+                        <h3>{room.name}</h3>
+                        <p className="last-message">{room.lastMessage}</p>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </>
+    );
 }
-export default ChatRoomList;
+
+export default ChatRoomList

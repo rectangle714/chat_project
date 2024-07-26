@@ -1,6 +1,7 @@
 package com.chat_project.web.chat.entity
 
 import com.chat_project.common.BaseEntity
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
@@ -21,6 +22,7 @@ class ChatRoom(
     var numberPeople = numberPeople
         protected set
 
+    @JsonIgnore
     @OneToMany(mappedBy = "chatRoom")
     var chat:MutableList<Chat> = ArrayList()
         protected set

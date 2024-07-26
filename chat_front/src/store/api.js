@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { AuthProvider } from './authProvider';
+import { useAuth } from './authProvider';
 
 // Axios 인스턴스 생성
 const api = axios.create({
@@ -12,9 +12,17 @@ const api = axios.create({
 
 // 요청 인터셉터 설정
 api.interceptors.request.use(
-    async(request) => {
-        const accessToken = Cookies.get('accessToken');
-        request.headers['Authorization'] = `Bearer ${accessToken}`;
+    (request) => {
+        const { reissue } = useAuth();
+        let accessToken = Cookies.get('accessToken');
+        
+        if(accessToken) {
+            request.headers['Authorization'] = `Bearer ${accessToken}`;
+        } else {
+            reissue();
+            accessToken = Cookies.get('accessToken');
+            request.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
 
         return request;
     },
@@ -32,8 +40,8 @@ api.interceptors.response.use(
         return response;
     },
     async(error) => {
-        if(error.status == 401) {
-            AuthProvider.reissue();
+        if(error.status === 401) {
+            console.log('401 에러');
         }
         return Promise.reject(error);
     }

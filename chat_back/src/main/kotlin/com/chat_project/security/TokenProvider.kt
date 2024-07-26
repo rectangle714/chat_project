@@ -25,13 +25,14 @@ class TokenProvider(
     private val refreshTokenExpiration: Long,
 ) {
     fun createToken(userInfo: String, tokenType: TokenType): String {
-        val expiration: Long = if(tokenType == TokenType.REFRESH_TOKEN) refreshTokenExpiration else accessTokenExpiration
+        val expiration: Long = if(tokenType == TokenType.ACCESS_TOKEN) accessTokenExpiration else refreshTokenExpiration * 60
+
 
         return Jwts.builder()
             .signWith(SecretKeySpec(secretKey.toByteArray(), SignatureAlgorithm.HS512.jcaName))
             .setSubject(userInfo)
             .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
-            .setExpiration(Date.from(Instant.now().plus(expiration, ChronoUnit.HOURS)))
+            .setExpiration(Date.from(Instant.now().plus(expiration, ChronoUnit.MINUTES)))
             .compact()!!
     }
 

@@ -41,18 +41,6 @@ class JwtAuthenticationFilter(
                 } else {
                     throw CustomException(CustomExceptionCode.BAD_TOKEN_INFO)
                 }
-            } else if(null != request.getHeader("REFRESH_TOKEN")) {
-                val refreshToken: String? = tokenProvider.parseBearerToken(request.getHeader("REFRESH_TOKEN"));
-                if(refreshToken != null) {
-                    val user = tokenProvider.parseTokenInfo(refreshToken)
-                    if(Objects.nonNull(redisUtil.getData(user.username))) {
-                        UsernamePasswordAuthenticationToken.authenticated(user, refreshToken, user.authorities)
-                            .apply { details = WebAuthenticationDetails(request) }
-                            .also { SecurityContextHolder.getContext().authentication = it }
-                    } else {
-                        throw CustomException(CustomExceptionCode.BAD_TOKEN_INFO)
-                    }
-                }
             }
         } catch (e: Exception) {
             // 예외 발생 시 ExceptionHandler에서 처리한다.

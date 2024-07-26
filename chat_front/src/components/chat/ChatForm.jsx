@@ -5,11 +5,12 @@ import * as StompJs from "@stomp/stompjs";
 import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
 import logout from '@assets/images/logout.png'
+import Cookies from 'js-cookie';
 
 const ChatForm = () => {
     const URL = process.env.REACT_APP_WS_URL;
     const navigate = useNavigate();
-    const { accessToken } = useAuth();
+    const { accessToken, reissue } = useAuth();
     const chatEndRef = useRef(null);
     const [member, setMember] = useState({email: '', nickname: ''});
 
@@ -47,9 +48,9 @@ const ChatForm = () => {
             const chatArray = response.data;
             chatArray.forEach(chat => {
                 if(chat.sender != member.nickname) {
-                    appendMessageTag('left', chat.sender, chat.message);
+                    appendMessageTag('left', chat.sender, chat.message, chat.registerDate);
                 } else {
-                    appendMessageTag('right', chat.sender, chat.message);
+                    appendMessageTag('right', chat.sender, chat.message, chat.registerDate);
                 }
             });
         } catch(error) {
@@ -88,9 +89,9 @@ const ChatForm = () => {
         if(message.body) {
             const msg = JSON.parse(message.body);
             if(msg.sender != member.nickname) {
-                appendMessageTag('left', msg.sender, msg.message);
+                appendMessageTag('left', msg.sender, msg.message, msg.registerDate);
             } else {
-                appendMessageTag('right', msg.sender, msg.message);
+                appendMessageTag('right', msg.sender, msg.message, msg.registerDate);
             }
         }
     }
@@ -100,22 +101,36 @@ const ChatForm = () => {
         client.deactivate();
     }
 
-    const sendMessage = (message) => {
+    const sendMessage = async(message) => {
         if(message == '') { return false; }
         
-        client.publish({
-            destination: '/pub/message',
-            body: JSON.stringify({
-                "chatRoomId" : 1,
-                "chatType" : "SEND",
-                "message" : message,
-                "accessToken" : accessToken
+        if(Cookies.get('accessToken')) {
+            client.publish({
+                destination: '/pub/message',
+                body: JSON.stringify({
+                    "chatRoomId" : 1,
+                    "chatType" : "SEND",
+                    "message" : message,
+                    "accessToken" : accessToken
+                })
             })
-        })
+        } else {
+            await reissue();
+
+            client.publish({
+                destination: '/pub/message',
+                body: JSON.stringify({
+                    "chatRoomId" : 1,
+                    "chatType" : "SEND",
+                    "message" : message,
+                    "accessToken" : Cookies.get('accessToken')
+                })
+            })
+        }
     }
 
-    const appendMessageTag = (LR_className, senderName, message) => {
-        const newMessage = { LR_className, senderName, message };
+    const appendMessageTag = (LR_className, senderName, message, registerDate) => {
+        const newMessage = { LR_className, senderName, message, registerDate };
         setMessages(prevMessages => [...prevMessages, newMessage]);
     };
 
@@ -141,11 +156,7 @@ const ChatForm = () => {
     }, [messages]);
 
     useEffect(() => {
-        if(accessToken != null) {
-            getMember();
-        } else {
-            navigate('/login');
-        }
+        getMember();
     }, [])
 
     return (
@@ -162,9 +173,11 @@ const ChatForm = () => {
                                 <div className="sender">
                                     <span>{msg.senderName}</span>
                                 </div>
+                                {msg.LR_className == 'right' ? <span>{msg.registerDate}</span> : ''}
                                 <div className="message">
                                     <span>{msg.message}</span>
                                 </div>
+                                {msg.LR_className == 'left' ? <span>{msg.registerDate}</span> : ''}
                             </li>
                         ))}
                     </ul>
