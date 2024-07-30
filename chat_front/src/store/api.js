@@ -13,13 +13,13 @@ const api = axios.create({
 // 요청 인터셉터 설정
 api.interceptors.request.use(
     (request) => {
-        const { reissue } = useAuth();
+        // const { reissue } = useAuth();
         let accessToken = Cookies.get('accessToken');
         
         if(accessToken) {
             request.headers['Authorization'] = `Bearer ${accessToken}`;
         } else {
-            reissue();
+            // reissue();
             accessToken = Cookies.get('accessToken');
             request.headers['Authorization'] = `Bearer ${accessToken}`;
         }
@@ -33,17 +33,14 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
     (response) => {
-        if(response.status === 404) {
-            console.log('404 에러');
-        }
-
         return response;
     },
     async(error) => {
-        if(error.status === 401) {
-            console.log('401 에러');
+        if(error.status === 400 || error.status === 401) {
+            return axios(error);
+        } else {
+            return Promise.reject(error);
         }
-        return Promise.reject(error);
     }
 )
 

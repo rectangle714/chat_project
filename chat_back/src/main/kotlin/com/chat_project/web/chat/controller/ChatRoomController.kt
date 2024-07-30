@@ -1,6 +1,6 @@
 package com.chat_project.web.chat.controller
 
-import com.chat_project.web.chat.dto.ChatRoomDTO
+import com.chat_project.web.chat.dto.ChatRoomResponseDTO
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.service.ChatRoomService
 import io.swagger.v3.oas.annotations.Operation
@@ -19,11 +19,11 @@ class ChatRoomController(
 ) {
     @GetMapping("/list")
     @Operation(method = "GET", summary = "채팅방 목록 조회")
-    fun list(): ResponseEntity<MutableList<ChatRoom>>
+    fun list(): ResponseEntity<MutableList<ChatRoomResponseDTO>>
         = ResponseEntity.ok(chatRoomService.getChatRoomList())
 
     @PostMapping("/add")
     @Operation(method = "POST", summary = "채팅방 추가")
-    fun add(chatRoomDTO:ChatRoomDTO): ResponseEntity<String>
+    fun add(chatRoomDTO:ChatRoomResponseDTO): ResponseEntity<String>
         = ResponseEntity.ok(chatRoomService.addChatRoom(chatRoomDTO))
 }
