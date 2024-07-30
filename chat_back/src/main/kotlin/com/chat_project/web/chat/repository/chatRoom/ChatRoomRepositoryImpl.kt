@@ -15,8 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import org.modelmapper.ModelMapper
 
 class ChatRoomRepositoryImpl(
-    private val query: JPAQueryFactory,
-    private val modelMapper: ModelMapper
+    private val query: JPAQueryFactory
 ) : ChatRoomRepositoryCustom {
     override fun getChatRoomList(): MutableList<ChatRoomResponseDTO> {
         val lastMessageRegisterDateSubQuery = JPAExpressions

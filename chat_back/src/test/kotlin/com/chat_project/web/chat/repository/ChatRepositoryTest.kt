@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.Rollback
 
 @DataJpaTest
 @Import(QuerydslConfig::class)
@@ -22,8 +23,7 @@ import org.springframework.context.annotation.Import
 class ChatRepositoryTest(
     @Autowired private val memberRepository: MemberRepository,
     @Autowired private val chatRepository: ChatRepository,
-    @Autowired private val chatRoomRepository: ChatRoomRepository,
-    @Autowired private val modelMapper: ModelMapper
+    @Autowired private val chatRoomRepository: ChatRoomRepository
 ) {
     companion object {
         private const val TEST_EMAIL = "admin";
@@ -44,6 +44,7 @@ class ChatRepositoryTest(
     }
 
     @Test
+    @Rollback(false)
     fun 채팅방_생성() {
         chatRoomRepository.save(ChatRoom("테스트", 0))
     }

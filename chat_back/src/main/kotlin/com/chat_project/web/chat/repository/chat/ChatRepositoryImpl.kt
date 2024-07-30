@@ -12,8 +12,7 @@ import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.core.types.dsl.StringTemplate
 
 class ChatRepositoryImpl(
-    private val query: JPAQueryFactory,
-    private val modelMapper: ModelMapper
+    private val query: JPAQueryFactory
 ): ChatRepositoryCustom {
     /* 채팅방의 채팅 리스트 조회 */
     override fun findChattingList(chatRoomId: Long): MutableList<ChatResponseDTO> {
