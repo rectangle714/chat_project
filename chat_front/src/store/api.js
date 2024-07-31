@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useAuth } from './authProvider';
 
 // Axios 인스턴스 생성
 const api = axios.create({
@@ -13,14 +12,9 @@ const api = axios.create({
 // 요청 인터셉터 설정
 api.interceptors.request.use(
     (request) => {
-        // const { reissue } = useAuth();
-        let accessToken = Cookies.get('accessToken');
+        const accessToken = Cookies.get('accessToken');
         
         if(accessToken) {
-            request.headers['Authorization'] = `Bearer ${accessToken}`;
-        } else {
-            // reissue();
-            accessToken = Cookies.get('accessToken');
             request.headers['Authorization'] = `Bearer ${accessToken}`;
         }
 
@@ -36,8 +30,26 @@ api.interceptors.response.use(
         return response;
     },
     async(error) => {
-        if(error.status === 400 || error.status === 401) {
-            return axios(error);
+        const originalRequest = error.config;
+
+        if(error.response.status == 401) {
+            try {
+                const URL = process.env.REACT_APP_API_URL;
+                const response = await axios.post(URL + "/api/member/reissue", null, {
+                    headers: { 'REFRESH_TOKEN' : Cookies.get('refreshToken') }
+                })
+
+                Cookies.set('accessToken', response.data.accessToken, { expires: new Date(Date.now() + response.data.accessTokenExpiration), path: '/' });
+                originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+
+                return axios(originalRequest);
+            } catch(refreshError) {
+                if(refreshError.response && refreshError.response.status == 401) {
+                    window.location.href = '/login';
+                }
+
+                return new Promise.reject(refreshError);
+            }
         } else {
             return Promise.reject(error);
         }

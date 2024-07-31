@@ -12,7 +12,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<LoginForm />}/>
             <Route path="/chatroom" element={<ChatRoomForm />} />
-            <Route path="/chat" element={<ChatForm /> } />
+            <Route path="/chat/:id" element={<ChatForm /> } />
             <Route path="*" element={<LoginForm />} />
           </Routes>
         </AuthProvider>

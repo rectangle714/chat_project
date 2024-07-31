@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@stores/authProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as StompJs from "@stomp/stompjs";
 import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
@@ -17,6 +17,7 @@ const ChatForm = () => {
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
     const [client, setClient] = useState(null);
+    const { chatRoomId } = useParams();
 
     // 사용자 정보 조회
     const getMember = async() => {
@@ -41,7 +42,7 @@ const ChatForm = () => {
         try {
             const response = await api.get('/api/chat/list', {
                 params : {
-                    chatRoomId : 1
+                    chatRoomId : chatRoomId
                 }
             });
 
@@ -75,7 +76,7 @@ const ChatForm = () => {
             });
     
             clientData.onConnect = function() {
-                clientData.subscribe('/sub/chat/room/' + 1, callback);
+                clientData.subscribe('/sub/chat/room/' + chatRoomId, callback);
             };
     
             clientData.activate();
@@ -108,7 +109,7 @@ const ChatForm = () => {
             client.publish({
                 destination: '/pub/message',
                 body: JSON.stringify({
-                    "chatRoomId" : 1,
+                    "chatRoomId" : chatRoomId,
                     "chatType" : "SEND",
                     "message" : message,
                     "accessToken" : accessToken
@@ -120,7 +121,7 @@ const ChatForm = () => {
             client.publish({
                 destination: '/pub/message',
                 body: JSON.stringify({
-                    "chatRoomId" : 1,
+                    "chatRoomId" : chatRoomId,
                     "chatType" : "SEND",
                     "message" : message,
                     "accessToken" : Cookies.get('accessToken')

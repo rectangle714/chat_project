@@ -1,6 +1,7 @@
 package com.chat_project.web.member.controller
 
 import com.chat_project.common.util.logger
+import com.chat_project.exception.CustomExceptionCode
 import com.chat_project.security.TokenDTO
 import com.chat_project.web.member.dto.MemberDTO
 import com.chat_project.web.member.repository.MemberRepository
@@ -43,8 +44,15 @@ class MemberController(
 
     @Operation(method = "POST", summary = "토큰 재발급", description = "REFRESH 토큰 재발급 API")
     @PostMapping("/reissue")
-    fun reissue(@RequestHeader("REFRESH_TOKEN") refreshToken: String): ResponseEntity<TokenDTO>
-        = ResponseEntity.ok(memberService.reissue(refreshToken))
+    fun reissue(@RequestHeader("REFRESH_TOKEN", required = false) refreshToken: String?): ResponseEntity<Any> {
+        refreshToken?.let {
+            return ResponseEntity.ok(memberService.reissue(refreshToken))
+        } ?: run {
+            return ResponseEntity
+                .status(CustomExceptionCode.BAD_REFRESH_TOKEN_INFO.status)
+                .body(CustomExceptionCode.BAD_REFRESH_TOKEN_INFO.message)
+        }
+    }
 
     @Operation(method = "GET", summary = "사용자 정보 조회 API")
     @GetMapping("/info")

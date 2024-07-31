@@ -1,15 +1,13 @@
 package com.chat_project.security
 
-import com.chat_project.common.util.logger
 import com.chat_project.common.util.RedisUtil
-import com.chat_project.exception.CustomException
-import com.chat_project.exception.CustomExceptionCode
+import com.chat_project.common.util.logger
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetails
@@ -39,14 +37,15 @@ class JwtAuthenticationFilter(
                         .apply { details = WebAuthenticationDetails(request) }
                         .also { SecurityContextHolder.getContext().authentication = it }
                 } else {
-                    throw CustomException(CustomExceptionCode.BAD_TOKEN_INFO)
+                    throw MalformedJwtException("Refresh 토큰 만료")
                 }
+            } else {
+                throw MalformedJwtException("Access 토큰 만료")
             }
         } catch (e: Exception) {
             // 예외 발생 시 ExceptionHandler에서 처리한다.
             request.setAttribute("exception", e)
         }
-
 
         filterChain.doFilter(request, response)
     }

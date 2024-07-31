@@ -42,7 +42,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(MalformedJwtException::class)
     fun malformedJwtException(e: MalformedJwtException): ResponseEntity<ApiResponse> {
         logger.error("MalformedJwtException 발생: {}", e.message)
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("올바르지 않은 토큰입니다."))
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(e.message))
     }
 
     @ExceptionHandler(ExpiredJwtException::class)
