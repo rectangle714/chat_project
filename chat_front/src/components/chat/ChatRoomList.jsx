@@ -1,19 +1,17 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ChatRoomList = ({chatRoomList}) => {
     const navigate = useNavigate();
-    const [roomId, setRoomId] = useState();
 
-    const cliickRoom = (roomId) => {
-        navigate('/chat/'+roomId);
+    const clickRoom = (roomId, roomName) => {
+        navigate('/chat/'+roomId, {state: {'roomName' : roomName}});
     }
 
     return (
         <>
             <ul>
                 {chatRoomList.length > 0 ? chatRoomList.map(room => (
-                    <li key={room.id} className="chat-room" onClick={() => cliickRoom(room.id)}>
+                    <li key={room.id} className="chat-room" onClick={() => clickRoom(room.id, room.roomName)}>
                         <img src='https://via.placeholder.com/50' alt={`${room.name} avatar`} />
                         <div className="chat-room-info">
                             <h3>{room.roomName}</h3>

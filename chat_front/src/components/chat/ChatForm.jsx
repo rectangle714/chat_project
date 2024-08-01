@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@stores/authProvider';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import * as StompJs from "@stomp/stompjs";
 import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
@@ -17,7 +17,9 @@ const ChatForm = () => {
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
     const [client, setClient] = useState(null);
-    const { chatRoomId } = useParams();
+    const { id } = useParams();
+    const location = useLocation();
+    const roomName = location.state.roomName;
 
     // 사용자 정보 조회
     const getMember = async() => {
@@ -39,10 +41,11 @@ const ChatForm = () => {
 
     // 채팅목록 조회
     const getChatting = async() => {
+        console.log( 'chatRoomId ',id );
         try {
             const response = await api.get('/api/chat/list', {
                 params : {
-                    chatRoomId : chatRoomId
+                    chatRoomId : id
                 }
             });
 
@@ -76,7 +79,7 @@ const ChatForm = () => {
             });
     
             clientData.onConnect = function() {
-                clientData.subscribe('/sub/chat/room/' + chatRoomId, callback);
+                clientData.subscribe('/sub/chat/room/' + id, callback);
             };
     
             clientData.activate();
@@ -109,7 +112,7 @@ const ChatForm = () => {
             client.publish({
                 destination: '/pub/message',
                 body: JSON.stringify({
-                    "chatRoomId" : chatRoomId,
+                    "chatRoomId" : id,
                     "chatType" : "SEND",
                     "message" : message,
                     "accessToken" : accessToken
@@ -121,7 +124,7 @@ const ChatForm = () => {
             client.publish({
                 destination: '/pub/message',
                 body: JSON.stringify({
-                    "chatRoomId" : chatRoomId,
+                    "chatRoomId" : id,
                     "chatType" : "SEND",
                     "message" : message,
                     "accessToken" : Cookies.get('accessToken')
@@ -148,7 +151,7 @@ const ChatForm = () => {
     const handleClick = (e) => {
         if(window.confirm('채팅방을 나가시겠습니까?')) {
             disConnection();
-            navigate('/login');
+            navigate('/chatRoom');
         }
     }
 
@@ -163,7 +166,7 @@ const ChatForm = () => {
     return (
         <div className="chat_wrap">
             <div className="header">
-                    <span style={{flex:2}}>CHAT</span>
+                    <span style={{flex:2}}>{roomName}</span>
                     <span style={{textAlign:'right'}}><img src={logout} alt='logout image' onClick={handleClick} className={'logout_img'}/></span>
             </div>
             <div className="chat">
