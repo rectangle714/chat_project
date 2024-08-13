@@ -5,12 +5,10 @@ import com.chat_project.common.BaseEntity
 import com.chat_project.common.constant.Role
 import com.chat_project.web.chat.entity.ChatRoomMember
 import com.chat_project.web.member.dto.MemberDTO
-import groovy.transform.builder.Builder
 import jakarta.persistence.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Entity
-@Builder
 class Member (
     email: String = "",
     password: String = "",

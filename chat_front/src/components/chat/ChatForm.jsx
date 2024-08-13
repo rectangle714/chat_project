@@ -41,7 +41,6 @@ const ChatForm = () => {
 
     // 채팅목록 조회
     const getChatting = async() => {
-        console.log( 'chatRoomId ',id );
         try {
             const response = await api.get('/api/chat/list', {
                 params : {
@@ -189,7 +188,7 @@ const ChatForm = () => {
                 </div>
             </div>
             <div className="input-div">
-                <textarea 
+                <textarea
                     value={textareaValue}
                     onChange={handleChange}
                     onKeyDown={handleEnter} 
