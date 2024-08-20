@@ -14,7 +14,7 @@ const Header = ({loggedIn, handleLoginLogout}) => {
     return (
         <header>
             <div className="header">
-                <h2>채팅</h2>
+                <h2 style={{cursor: 'pointer'}} onClick={() => navigate('/chatRoom')}>채팅</h2>
                 <button onClick={onClickLogout}>
                     {accessToken ? '로그아웃' : '로그인'}
                 </button>

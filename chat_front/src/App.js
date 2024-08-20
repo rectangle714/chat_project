@@ -13,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<LoginForm />}/>
             <Route path="/chatroom" element={<ChatRoomForm />} />
+            <Route path="/chatroom/:id" element={<CreateChatRoomForm />} />
             <Route path="/chatroom/create" element={<CreateChatRoomForm />} />
             <Route path="/chat/:id" element={<ChatForm /> } />
             <Route path="*" element={<LoginForm />} />

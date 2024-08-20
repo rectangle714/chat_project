@@ -44,9 +44,8 @@ api.interceptors.response.use(
 
                 return axios(originalRequest);
             } catch(refreshError) {
-                if(refreshError.response && refreshError.response.status == 401) {
-                    window.location.href = '/login';
-                }
+                alert('로그인 시간이 만료되었습니다.');
+                window.location.href = '/login';
 
                 return new Promise.reject(refreshError);
             }

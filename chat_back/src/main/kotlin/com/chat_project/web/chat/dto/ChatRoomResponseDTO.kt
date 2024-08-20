@@ -8,5 +8,6 @@ data class ChatRoomResponseDTO(
     var numberPeople: Int,
     var registerDate: LocalDateTime?,
     var updateDate: LocalDateTime?,
-    var lastMessage: String?
+    var lastMessage: String?,
+    var lastSendDate: LocalDateTime?
 )

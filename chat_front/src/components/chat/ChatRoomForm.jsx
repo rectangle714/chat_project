@@ -3,8 +3,8 @@ import Layout from '@layout/Layout';
 import ChatRoomList from './ChatRoomList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '@stores/api'
 import { Box, Button, Pagination } from '@mui/material';
+import api from '@stores/api';
 
 const ChatRoomForm = () => {
     const navigate = useNavigate();
@@ -32,11 +32,8 @@ const ChatRoomForm = () => {
 
     useEffect(() => {
         getChatRoomList();
-    }, [])
-
-    useEffect(() => {
-        getChatRoomList();
     }, [page])
+
 
     return (
         <Layout>

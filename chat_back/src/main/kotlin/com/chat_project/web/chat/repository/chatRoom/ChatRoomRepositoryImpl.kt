@@ -4,6 +4,7 @@ import com.chat_project.web.chat.dto.ChatRoomResponseDTO
 import com.chat_project.web.chat.entity.QChat.chat
 import com.chat_project.web.chat.entity.QChatRoom.chatRoom
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Page
@@ -28,7 +29,8 @@ class ChatRoomRepositoryImpl(
                     chatRoom.numberPeople,
                     chatRoom.registerDate,
                     chatRoom.updateDate,
-                    chat.message.`as`("lastMessage")
+                    chat.message.`as`("lastMessage"),
+                    chat.registerDate.`as`("lastSendDate")
                 )
             )
             .from(chatRoom)
@@ -36,6 +38,7 @@ class ChatRoomRepositoryImpl(
                 chat.chatRoom.id.eq(chatRoom.id)
                     .and(chat.registerDate.eq(lastMessageRegisterDateSubQuery))
             )
+            .orderBy(chatRoom.registerDate.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .fetch()
@@ -49,7 +52,8 @@ class ChatRoomRepositoryImpl(
                     chatRoom.numberPeople,
                     chatRoom.registerDate,
                     chatRoom.updateDate,
-                    chat.message.`as`("lastMessage")
+                    chat.message.`as`("lastMessage"),
+                    chat.registerDate.`as`("lastSendDate")
                 )
             )
             .from(chatRoom)

@@ -5,6 +5,7 @@ import * as StompJs from "@stomp/stompjs";
 import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
 import logout from '@assets/images/logout.png'
+import setting from '@assets/images/setting.png'
 import Cookies from 'js-cookie';
 
 const ChatForm = () => {
@@ -21,7 +22,7 @@ const ChatForm = () => {
     const location = useLocation();
     const roomName = location.state.roomName;
 
-    // 사용자 정보 조회
+    /* 사용자 정보 조회 */
     const getMember = async() => {
         try {
             const response = await api.get('/api/member/info', null);
@@ -39,7 +40,7 @@ const ChatForm = () => {
         }
     }
 
-    // 채팅목록 조회
+    /* 채팅목록 조회 */
     const getChatting = async() => {
         try {
             const response = await api.get('/api/chat/list', {
@@ -147,11 +148,17 @@ const ChatForm = () => {
 
     const handleChange = (e) => { setTextareaValue(e.target.value); };
 
-    const handleClick = (e) => {
+    /* 로그아웃 이벤트 */
+    const handleLogoutClick = (e) => {
         if(window.confirm('채팅방을 나가시겠습니까?')) {
             disConnection();
             navigate('/chatRoom');
         }
+    }
+
+    /* 방 설정 이벤트 */
+    const handleSettingClick = (e) => {
+        navigate(`/chatRoom/${id}`);
     }
 
     useEffect(() => {
@@ -166,7 +173,10 @@ const ChatForm = () => {
         <div className="chat_wrap">
             <div className="header">
                     <span style={{flex:2}}>{roomName}</span>
-                    <span style={{textAlign:'right'}}><img src={logout} alt='logout image' onClick={handleClick} className={'logout_img'}/></span>
+                    <span style={{textAlign:'right'}}>
+                        <img src={setting} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
+                        <img src={logout} alt='logout image' onClick={handleLogoutClick} className={'logout_img'}/>
+                    </span>
             </div>
             <div className="chat">
                 <div className="chatformat">

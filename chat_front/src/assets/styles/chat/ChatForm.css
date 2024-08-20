@@ -20,6 +20,13 @@
     cursor: pointer;
 }
 
+.setting_img {
+    width: 20px; /* 고정 너비 */
+    height: 20px; /* 고정 높이 */
+    margin-right: 15px;
+    cursor: pointer;
+}
+
 .chat_wrap .chat{
     padding-bottom: 100px;
     padding-top: 55px;

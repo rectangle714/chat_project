@@ -1,5 +1,6 @@
 package com.chat_project.web.chat.entity
 
+import com.chat_project.common.AuditableEntity
 import com.chat_project.common.BaseEntity
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
@@ -9,7 +10,7 @@ import org.hibernate.annotations.Comment
 class ChatRoom(
     roomName: String,
     numberPeople: Int
-) : BaseEntity() {
+) : AuditableEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_room_id")
     var id:Long? = null
@@ -26,4 +27,9 @@ class ChatRoom(
     @OneToMany(mappedBy = "chatRoom")
     var chat:MutableList<Chat> = ArrayList()
         protected set
+
+    fun update(roomName:String, numberPeople: Int) {
+        this.roomName = roomName
+        this.numberPeople = numberPeople
+    }
 }

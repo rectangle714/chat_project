@@ -1,5 +1,6 @@
 package com.chat_project.web.chat.entity
 
+import com.chat_project.common.AuditableEntity
 import jakarta.persistence.*
 
 @Entity
@@ -8,7 +9,7 @@ class File(
     storedFileName: String,
     fileSize: Long?,
     chat: Chat
-) {
+): AuditableEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
