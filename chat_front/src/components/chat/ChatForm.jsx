@@ -70,6 +70,9 @@ const ChatForm = () => {
                 connectHeaders: {
                     Authorization : accessToken
                 },
+                body: {
+                    chat_room_id : id
+                },
                 debug: function(val) {
                     // console.log('val ',val);
                 },
@@ -201,8 +204,7 @@ const ChatForm = () => {
                 <textarea
                     value={textareaValue}
                     onChange={handleChange}
-                    onKeyDown={handleEnter} 
-                    placeholder="Press Enter for send message."
+                    onKeyDown={handleEnter}
                 />
             </div>
         </div>

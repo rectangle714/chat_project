@@ -33,6 +33,10 @@ class Member (
         protected set
 
     @OneToMany(mappedBy = "member")
+    var chattings:MutableList<Chat> = ArrayList()
+        protected set
+
+    @OneToMany(mappedBy = "member")
     var chatRoomMates:MutableList<ChatRoomMember> = ArrayList()
         protected set
 

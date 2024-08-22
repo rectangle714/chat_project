@@ -17,7 +17,6 @@ import org.springframework.security.messaging.context.SecurityContextChannelInte
 import org.springframework.web.socket.config.annotation.*
 
 @Configuration
-@EnableWebSocket
 @EnableWebSocketMessageBroker
 class WebSocketConfig(
     private val stompHandler: StompHandler,
@@ -36,13 +35,6 @@ class WebSocketConfig(
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
-        var myAuthorizationRules: AuthorizationManager<Message<*>> = AuthenticatedAuthorizationManager.authenticated()
-        var authz: AuthorizationChannelInterceptor = AuthorizationChannelInterceptor(myAuthorizationRules)
-        registration.interceptors(SecurityContextChannelInterceptor(), authz)
         registration.interceptors(stompHandler)
-    }
-
-    override fun addArgumentResolvers(argumentResolvers: MutableList<HandlerMethodArgumentResolver>) {
-        argumentResolvers.add(AuthenticationPrincipalArgumentResolver())
     }
 }

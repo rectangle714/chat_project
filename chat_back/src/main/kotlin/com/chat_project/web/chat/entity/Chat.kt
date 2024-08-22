@@ -17,7 +17,7 @@ class Chat(
     var message = message
         protected set
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     var member = member
 
