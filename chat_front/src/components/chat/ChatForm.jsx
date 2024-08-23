@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@stores/authProvider';
+import { IconButton } from "@mui/material";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import * as StompJs from "@stomp/stompjs";
 import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
-import logout from '@assets/images/logout.png'
-import setting from '@assets/images/setting.png'
+import logoutImg from '@assets/images/logout.png'
+import settingImg from '@assets/images/setting.png'
+import sendImg from '@assets/images/send.png'
 import Cookies from 'js-cookie';
 
 const ChatForm = () => {
@@ -159,6 +161,13 @@ const ChatForm = () => {
         }
     }
 
+    /* 전송버튼 이벤트 */
+    const handleSendClick = (e) => {
+        e.preventDefault();
+        setTextareaValue('');
+        sendMessage(textareaValue);
+    }
+
     /* 방 설정 이벤트 */
     const handleSettingClick = (e) => {
         navigate(`/chatRoom/${id}`);
@@ -177,8 +186,8 @@ const ChatForm = () => {
             <div className="header">
                     <span style={{flex:2}}>{roomName}</span>
                     <span style={{textAlign:'right'}}>
-                        <img src={setting} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
-                        <img src={logout} alt='logout image' onClick={handleLogoutClick} className={'logout_img'}/>
+                        <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
+                        <img src={logoutImg} alt='logout image' onClick={handleLogoutClick} className={'logout_img'}/>
                     </span>
             </div>
             <div className="chat">
@@ -205,7 +214,13 @@ const ChatForm = () => {
                     value={textareaValue}
                     onChange={handleChange}
                     onKeyDown={handleEnter}
+                    style={{borderBottom: '1px solid black'}}
                 />
+                <div style={{textAlign:'right'}}>
+                    <IconButton variant='contained'>
+                        <img src={sendImg} alt='send image' onClick={handleSendClick} className={'send_img'}/>
+                    </IconButton>
+                </div>          
             </div>
         </div>
     );
