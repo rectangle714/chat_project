@@ -5,6 +5,7 @@ import com.chat_project.common.BaseEntity
 import com.chat_project.common.constant.Role
 import com.chat_project.web.chat.entity.ChatRoomMember
 import com.chat_project.web.member.dto.MemberDTO
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
@@ -36,8 +37,9 @@ class Member (
     var chattings:MutableList<Chat> = ArrayList()
         protected set
 
-    @OneToMany(mappedBy = "member")
-    var chatRoomMates:MutableList<ChatRoomMember> = ArrayList()
+    @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var chatRoomMember:MutableList<ChatRoomMember> = mutableListOf()
         protected set
 
     companion object{

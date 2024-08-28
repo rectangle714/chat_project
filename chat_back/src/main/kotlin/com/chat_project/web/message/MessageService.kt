@@ -11,7 +11,7 @@ import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
 import com.chat_project.web.chat.repository.chat.ChatRepository
 import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
-import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMateRepository
+import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
 import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
 import org.modelmapper.ModelMapper
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 class MessageService(
     private val chatRepository: ChatRepository,
     private val chatRoomRepository: ChatRoomRepository,
-    private val chatRoomMateRepository: ChatRoomMateRepository,
+    private val chatRoomMateRepository: ChatRoomMemberRepository,
     private val memberRepository: MemberRepository,
     private val channelTopic: ChannelTopic,
     private val redisTemplate: StringRedisTemplate,

@@ -1,5 +1,6 @@
 package com.chat_project.web.chat.controller
 
+import com.chat_project.web.chat.dto.ChatRoomRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.service.ChatRoomService
@@ -34,11 +35,16 @@ class ChatRoomController(
 
     @PostMapping("/add")
     @Operation(method = "POST", summary = "채팅방 추가")
-    fun add(chatRoomDTO:ChatRoomResponseDTO): ResponseEntity<String>
+    fun add(chatRoomDTO: ChatRoomRequestDTO): ResponseEntity<String>
         = ResponseEntity.ok(chatRoomService.addChatRoom(chatRoomDTO))
 
     @PostMapping("/update")
     @Operation(method = "POST", summary = "채팅방 정보 변경")
-    fun update(chatRoomDTO:ChatRoomResponseDTO): ResponseEntity<String>
+    fun update(chatRoomDTO: ChatRoomRequestDTO): ResponseEntity<String>
             = ResponseEntity.ok(chatRoomService.updateChatRoom(chatRoomDTO))
+
+    @PostMapping("/delete")
+    @Operation(method = "POST", summary = "채팅방 정보 삭제")
+    fun delete(chatRoomDTO: ChatRoomRequestDTO): ResponseEntity<String>
+        = ResponseEntity.ok(chatRoomService.deleteChatRoom(chatRoomDTO))
 }

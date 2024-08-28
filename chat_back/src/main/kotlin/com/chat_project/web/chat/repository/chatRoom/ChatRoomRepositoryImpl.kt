@@ -3,6 +3,7 @@ package com.chat_project.web.chat.repository.chatRoom
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
 import com.chat_project.web.chat.entity.QChat.chat
 import com.chat_project.web.chat.entity.QChatRoom.chatRoom
+import com.chat_project.web.chat.entity.QChatRoomMember.chatRoomMember
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.JPAExpressions
@@ -20,6 +21,11 @@ class ChatRoomRepositoryImpl(
             .from(chat)
             .where(chat.chatRoom.id.eq(chatRoom.id))
 
+        val memberCountSubQuery = JPAExpressions
+            .select(chatRoomMember.count())
+            .from(chatRoomMember)
+            .where(chatRoomMember.chatRoom.id.eq(chatRoom.id))
+
         val chatRoomList: MutableList<ChatRoomResponseDTO> = query
             .select(
                 Projections.constructor(
@@ -30,7 +36,8 @@ class ChatRoomRepositoryImpl(
                     chatRoom.registerDate,
                     chatRoom.updateDate,
                     chat.message.`as`("lastMessage"),
-                    chat.registerDate.`as`("lastSendDate")
+                    chat.registerDate.`as`("lastSendDate"),
+                    memberCountSubQuery
                 )
             )
             .from(chatRoom)
@@ -53,7 +60,8 @@ class ChatRoomRepositoryImpl(
                     chatRoom.registerDate,
                     chatRoom.updateDate,
                     chat.message.`as`("lastMessage"),
-                    chat.registerDate.`as`("lastSendDate")
+                    chat.registerDate.`as`("lastSendDate"),
+                    memberCountSubQuery
                 )
             )
             .from(chatRoom)

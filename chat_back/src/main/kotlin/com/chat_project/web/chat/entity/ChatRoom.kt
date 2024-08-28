@@ -24,9 +24,13 @@ class ChatRoom(
         protected set
 
     @JsonIgnore
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
     var chat:MutableList<Chat> = ArrayList()
         protected set
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var chatRoomMembers: MutableList<ChatRoomMember> = mutableListOf()
 
     fun update(roomName:String, numberPeople: Int) {
         this.roomName = roomName

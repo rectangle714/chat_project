@@ -5,9 +5,10 @@ import java.time.LocalDateTime
 data class ChatRoomResponseDTO(
     var id: Long?,
     var roomName: String?,
-    var numberPeople: Int,
+    var numberPeople: Int?,
     var registerDate: LocalDateTime?,
     var updateDate: LocalDateTime?,
     var lastMessage: String?,
-    var lastSendDate: LocalDateTime?
+    var lastSendDate: LocalDateTime?,
+    val memberCount: Long?
 )

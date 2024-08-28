@@ -12,8 +12,10 @@ import api from '@stores/api';
 
 const CreateChatRoomForm = () => {
     const navigate = useNavigate();
+    const [member, setMember] = useState({email: '', nickname: ''});
     const [roomName, setRoomName] = useState('');
     const [numberPeople, setNumberPeople] = useState('');
+    const [isRegister, setIsRegister] = useState(false);
     const { id } = useParams();
 
     /* 방 정보 생성 or 변경 */
@@ -29,11 +31,11 @@ const CreateChatRoomForm = () => {
 
         if(id) {
             try {
-                await api.post('/api/chatRoom/update',null ,{
+                await api.post('/api/chatRoom/update', null, {
                     params : {
                         id: id,
-                        roomName : roomName,
-                        numberPeople : numberPeople
+                        roomName: roomName,
+                        numberPeople: numberPeople
                     }
                 });
                 alert('채팅방 정보가 변경 되었습니다.');
@@ -44,10 +46,11 @@ const CreateChatRoomForm = () => {
             }
         } else {
             try {
-                await api.post('/api/chatRoom/add',null ,{
+                await api.post('/api/chatRoom/add', null, {
                     params : {
-                        roomName : roomName,
-                        numberPeople : numberPeople
+                        roomName: roomName,
+                        numberPeople: numberPeople,
+                        email: member.email
                     }
                 });
                 alert('채팅방이 생성 되었습니다.');
@@ -59,12 +62,49 @@ const CreateChatRoomForm = () => {
         }
     }
 
+    /* 채팅방 삭제 */
+    const deleteRoomBtn = async() => {
+        try{
+            await api.post('/api/chatRoom/delete', null, {
+                params : {
+                    id: id
+                }
+            })
+            alert('채팅방이 삭제 되었습니다.');
+            navigate('/chatRoom');
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    /* 사용자 정보 조회 */
+    const getMember = async() => {
+        try {
+            const response = await api.get('/api/member/info', null);
+            console.log('11', response);
+            setMember((prevMember) => {
+                prevMember.email = response.data.email;
+                prevMember.nickname = response.data.nickname;
+                return prevMember;
+            });
+            console.log('member ', member);
+        } catch(error) {
+            console.log('error ', error);
+            navigate('/login');
+        }
+    }
+
     /* 채팅방 수정일 때 채팅방 정보 조회 */
     const getRoomInfo = async () => {
         try {
             const response = await api.get(`/api/chatRoom/${id}`);
             setRoomName(response.data.roomName);
             setNumberPeople(response.data.numberPeople);
+            console.log(member.email);
+            console.log(response.data.registerEmail);
+            if(member.email == response.data.registerEmail) {
+                setIsRegister(true);
+            }
             console.log('response: ',response);
         } catch(error) {
             console.log('채팅방 정보 error: ', error);
@@ -73,9 +113,14 @@ const CreateChatRoomForm = () => {
     }
 
     useEffect(() => {
-        if(id) {
-            getRoomInfo();
-        }
+        const fetchData = async () => {
+            await getMember();
+            if (id) {
+                await getRoomInfo();
+            }
+        };
+
+        fetchData();
     }, [])
 
     return (
@@ -107,8 +152,16 @@ const CreateChatRoomForm = () => {
                             </FormControl>
                         </Box>
                     </div>
-                    <div style={{textAlign:'right', paddingBottom:'20px'}}>
-                        {id ? <Button variant='contained' onClick={createRoomBtn} >변경</Button> : <Button variant='contained' onClick={createRoomBtn} >방 생성</Button>}
+                    <div style={{textAlign:'right', paddingBottom:'20px', paddingTop:'20px'}}>
+                        {id ?
+                            <span><Button variant='contained' onClick={createRoomBtn}>변경</Button></span> : 
+                            <span><Button variant='contained' onClick={createRoomBtn}>방 생성</Button></span>
+                        }
+                        {id && isRegister == true ?
+                            <span style={{paddingLeft:'10px'}}>
+                                <Button style={{paddingLeft: '20px'}} variant='contained' onClick={deleteRoomBtn}>삭제</Button>
+                            </span>: ''
+                        }
                     </div>
                 </div>
             </div>

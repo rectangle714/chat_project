@@ -11,13 +11,13 @@ class ChatRoomMember(
 ): BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_room_member_id")
-    var id:Long? = null
+    var id: Long? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    var member = member
+    var member: Member? = member
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
-    var chatRoom = chatRoom
+    var chatRoom: ChatRoom = chatRoom
 }
