@@ -19,7 +19,7 @@ const ChatRoomList = ({chatRoomList}) => {
         }
 
         if(moment(lastSendDate).format('YYYY-MM-DD') == todayDate) {
-            return moment(lastSendDate).format('A hh:mm:ss');
+            return moment(lastSendDate).format('A hh:mm');
         } else {
             return moment(lastSendDate).format('YYYY-MM-DD');
         }
@@ -42,6 +42,11 @@ const ChatRoomList = ({chatRoomList}) => {
                             <div className="chat-room-info">
                                 <h3>{room.roomName}</h3>
                                 <p className="last-message">{room.lastMessage}</p>
+                            </div>
+                            <div>
+                                <p style={{fontSize: '12px', color:'#888', marginLeft:'10px', marginTop:'4px'}}>
+                                    {`(${room.memberCount} / ${room.numberPeople})`}
+                                </p>
                             </div>
                             <p className="last-message" style={{marginLeft:'auto', fontSize: '12px', color:'#888'}}>
                                 { roomNameRender(room.lastSendDate) }

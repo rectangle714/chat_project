@@ -58,7 +58,7 @@
 .chat-room {
     cursor: pointer;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     background-color: #fff;
     padding: 10px;
     margin-bottom: 10px;
@@ -90,7 +90,7 @@
 }
   
 .chat-room-info p {
-    margin: 0;
+    margin-top: 2px;
     font-size: 14px;
     color: #888;
 }
