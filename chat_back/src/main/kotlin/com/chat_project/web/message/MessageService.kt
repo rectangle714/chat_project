@@ -14,6 +14,7 @@ import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
 import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
+import com.chat_project.web.member.service.MemberService
 import org.modelmapper.ModelMapper
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.listener.ChannelTopic
@@ -28,6 +29,7 @@ class MessageService(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMateRepository: ChatRoomMemberRepository,
     private val memberRepository: MemberRepository,
+    private val memberService: MemberService,
     private val channelTopic: ChannelTopic,
     private val redisTemplate: StringRedisTemplate,
     private val modelMapper: ModelMapper,
@@ -56,5 +58,13 @@ class MessageService(
 
         redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(String::class.java)
         redisTemplate.convertAndSend(channelTopic.topic, ChatRequestDTO)
+    }
+
+    fun exitChatRoom(accessToken: String, roomId: Long) {
+        val user = tokenProvider.parseTokenInfo(accessToken);
+        val member: Member =  user.username
+            .let { memberRepository.findByEmail(it) }
+            ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
+
     }
 }

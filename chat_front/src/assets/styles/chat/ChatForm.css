@@ -44,6 +44,12 @@
     cursor: pointer;
 }
 
+.attach_img {
+    width: 20px; /* 고정 너비 */
+    height: 20px; /* 고정 높이 */
+    cursor: pointer;
+}
+
 .setting_img {
     width: 20px; /* 고정 너비 */
     height: 20px; /* 고정 높이 */

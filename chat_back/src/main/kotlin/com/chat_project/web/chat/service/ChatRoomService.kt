@@ -6,6 +6,7 @@ import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
 import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
+import com.chat_project.web.member.dto.MemberDTO
 import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
 import org.modelmapper.ModelMapper
@@ -18,7 +19,7 @@ import java.util.*
 @Service
 @Transactional(rollbackFor = [ Exception::class ])
 class ChatRoomService(
-    private val mapper: ModelMapper,
+    private val modelMapper: ModelMapper,
     private val chatRoomRepository: ChatRoomRepository,
     private val memberRepository: MemberRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository
@@ -34,7 +35,7 @@ class ChatRoomService(
     }
 
     fun addChatRoom(chatRoomDTO: ChatRoomRequestDTO): String {
-        val chatRoom: ChatRoom = chatRoomRepository.save(mapper.map(chatRoomDTO, ChatRoom::class.java))
+        val chatRoom: ChatRoom = chatRoomRepository.save(modelMapper.map(chatRoomDTO, ChatRoom::class.java))
 
         val member: Member? = memberRepository.findByEmail(chatRoomDTO.email)
         val chatRoomMember: ChatRoomMember = ChatRoomMember(member, chatRoom)
@@ -54,6 +55,29 @@ class ChatRoomService(
             .orElseThrow { IllegalArgumentException("채팅방을 찾을 수 없습니다. ID: ${chatRoomDTO.id}") }
         chatRoomRepository.delete(chatRoom);
         return "success"
+    }
+
+    fun isUserInChatRoom(email:String, roomId: Long): String {
+        var result: String = "fail"
+
+        val memberDTO: MemberDTO = memberRepository.findByEmail(email)
+            ?. let { modelMapper.map(it, MemberDTO::class.java) }
+            ?: throw NoSuchElementException("찾을 수 없는 이메일 : $email")
+
+        var chatRoom: ChatRoom;
+        chatRoomRepository.findById(roomId)
+            .let {
+                chatRoom = it.orElseThrow {
+                    IllegalArgumentException("존재하지 않는 방입니다.")
+                }
+            }
+
+        chatRoomMemberRepository.findByMemberIdAndChatRoomId(memberDTO.memberId, roomId)
+            ?. let {
+                result = "success"
+            }
+
+        return result
     }
 
 }

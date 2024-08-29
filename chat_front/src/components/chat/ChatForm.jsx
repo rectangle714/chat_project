@@ -7,6 +7,7 @@ import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
 import logoutImg from '@assets/images/logout.png'
 import settingImg from '@assets/images/setting.png'
+import attachImg from '@assets/images/attach.png'
 import sendImg from '@assets/images/send.png'
 import Cookies from 'js-cookie';
 
@@ -70,22 +71,19 @@ const ChatForm = () => {
             const clientData = new StompJs.Client({
                 brokerURL: `ws://${URL}/ws`,
                 connectHeaders: {
-                    Authorization : accessToken
-                },
-                body: {
-                    chat_room_id : id
+                    Authorization: accessToken,
+                    room_id: id
                 },
                 debug: function(val) {
                     // console.log('val ',val);
                 },
                 reconnectDelay: 5000,
                 heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000
+                heartbeatOutgoing: 4000,
+                onConnect: function(frame) {
+                    clientData.subscribe(`/sub/chat/room/${id}`, callback);
+                },
             });
-    
-            clientData.onConnect = function() {
-                clientData.subscribe('/sub/chat/room/' + id, callback);
-            };
     
             clientData.activate();
             setClient(clientData);
@@ -107,7 +105,17 @@ const ChatForm = () => {
 
     const disConnection = () => {
         if(client === null) { return; }
-        client.deactivate();
+            client.publish({
+                destination: `/pub/chat/exit/${id}`,
+                headers: {
+                    Authorization: accessToken
+                }
+            });
+        try {
+            client.deactivate();
+        } catch(error) {
+            console.log('error ',error);
+        }
     }
 
     const sendMessage = async(message) => {
@@ -168,6 +176,10 @@ const ChatForm = () => {
         sendMessage(textareaValue);
     }
 
+    const handleAttachClick = (e) => {
+
+    }
+
     /* 방 설정 이벤트 */
     const handleSettingClick = (e) => {
         navigate(`/chatRoom/${id}`);
@@ -217,10 +229,17 @@ const ChatForm = () => {
                     style={{borderBottom: '1px solid black'}}
                 />
                 <div style={{textAlign:'right'}}>
-                    <IconButton variant='contained'>
-                        <img src={sendImg} alt='send image' onClick={handleSendClick} className={'send_img'}/>
-                    </IconButton>
-                </div>          
+                    <span>
+                        <IconButton variant='contained'>
+                            <img src={attachImg} alt='attach image' onClick={handleSendClick} className={'attach_img'}/>
+                        </IconButton>
+                    </span>
+                    <span>
+                        <IconButton variant='contained'>
+                            <img src={sendImg} alt='send image' onClick={handleAttachClick} className={'send_img'}/>
+                        </IconButton>
+                    </span>
+                </div>
             </div>
         </div>
     );
