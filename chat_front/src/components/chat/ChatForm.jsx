@@ -54,10 +54,14 @@ const ChatForm = () => {
 
             const chatArray = response.data;
             chatArray.forEach(chat => {
-                if(chat.sender != member.nickname) {
-                    appendMessageTag('left', chat.sender, chat.message, chat.registerDate);
+                if(chat.isAlert != 'Y') {
+                    if(chat.sender != member.nickname) {
+                        appendMessageTag('left', chat.sender, chat.message, chat.registerDate);
+                    } else {
+                        appendMessageTag('right', chat.sender, chat.message, chat.registerDate);
+                    }
                 } else {
-                    appendMessageTag('right', chat.sender, chat.message, chat.registerDate);
+                    appendMessageTag('center', chat.sender, chat.message, chat.registerDate);
                 }
             });
         } catch(error) {
@@ -105,13 +109,15 @@ const ChatForm = () => {
 
     const disConnection = () => {
         if(client === null) { return; }
+
+        try {
+            console.log('disConnection');
             client.publish({
-                destination: `/pub/chat/exit/${id}`,
+                destination: `/pub/chatRoom/exit/${id}`,
                 headers: {
                     Authorization: accessToken
                 }
             });
-        try {
             client.deactivate();
         } catch(error) {
             console.log('error ',error);
@@ -165,7 +171,7 @@ const ChatForm = () => {
     const handleLogoutClick = (e) => {
         if(window.confirm('채팅방을 나가시겠습니까?')) {
             disConnection();
-            navigate('/chatRoom');
+            window.location.href = '/chatRoom';
         }
     }
 
@@ -196,7 +202,7 @@ const ChatForm = () => {
     return (
         <div className="chat_wrap">
             <div className="header">
-                    <span style={{flex:2}}>{roomName}</span>
+                    <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
                     <span style={{textAlign:'right'}}>
                         <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
                         <img src={logoutImg} alt='logout image' onClick={handleLogoutClick} className={'logout_img'}/>
@@ -204,17 +210,19 @@ const ChatForm = () => {
             </div>
             <div className="chat">
                 <div className="chatformat">
-                    <ul>
+                    <ul style={{padding:'0px'}}>
                         {messages.map((msg, index) => (
                             <li key={index} className={msg.LR_className}>
-                                <div className="sender">
-                                    <span>{msg.senderName}</span>
-                                </div>
-                                {msg.LR_className == 'right' ? <span>{msg.registerDate}</span> : ''}
+                                {msg.LR_className != 'center' ?
+                                    <div className = 'sender'>
+                                        <span>{msg.senderName}</span>
+                                    </div> : ""
+                                }
+                                {msg.LR_className == 'right' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''}
                                 <div className="message">
                                     <span>{msg.message}</span>
                                 </div>
-                                {msg.LR_className == 'left' ? <span>{msg.registerDate}</span> : ''}
+                                {msg.LR_className == 'left' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''}
                             </li>
                         ))}
                     </ul>

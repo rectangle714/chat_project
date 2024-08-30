@@ -19,17 +19,11 @@ class MessageController(
 
     /* 메세지 전송 */
     @MessageMapping("/message")
-    fun message(@Payload chatRequestDTO: ChatRequestDTO) {
-        messageService.sendMessage(chatRequestDTO)
-    }
+    fun message(@Payload chatRequestDTO: ChatRequestDTO)
+        = messageService.sendMessage(chatRequestDTO)
 
     /* 채팅방 퇴장 */
     @MessageMapping("/chatRoom/exit/{roomId}")
-    fun exitChatRoom(
-            @Header("Authorization") accessToken: String,
-            @DestinationVariable("roomId") roomId: Long,
-            @Payload message: String
-    ) {
-        messageService.exitChatRoom(accessToken, roomId)
-    }
+    fun exitChatRoom( @Header("Authorization") accessToken: String, @DestinationVariable("roomId") roomId: Long)
+        = messageService.exitChatRoom(accessToken, roomId)
 }

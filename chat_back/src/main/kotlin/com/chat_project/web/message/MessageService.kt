@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 class MessageService(
     private val chatRepository: ChatRepository,
     private val chatRoomRepository: ChatRoomRepository,
-    private val chatRoomMateRepository: ChatRoomMemberRepository,
+    private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val memberRepository: MemberRepository,
     private val memberService: MemberService,
     private val channelTopic: ChannelTopic,
@@ -36,23 +36,15 @@ class MessageService(
     private val tokenProvider: TokenProvider
 ) {
     fun sendMessage(ChatRequestDTO: ChatRequestDTO) {
-        val user = tokenProvider.parseTokenInfo(ChatRequestDTO.accessToken);
-        val chatRoom: ChatRoom = ChatRequestDTO.chatRoomId
-                                    ?.let { chatRoomRepository.findById(it).get() }
-                                    ?: throw CustomException(CustomExceptionCode.CHAT_ROOM_NOT_FOUND)
+        val user = tokenProvider.parseTokenInfo(ChatRequestDTO.accessToken)
         val member: Member =  user.username
                                 .let { memberRepository.findByEmail(it) }
                                 ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
+        val chatRoom: ChatRoom = ChatRequestDTO.chatRoomId
+            ?.let { chatRoomRepository.findById(it).get() }
+            ?: throw CustomException(CustomExceptionCode.CHAT_ROOM_NOT_FOUND)
 
-        if(ChatRequestDTO.chatType == ChatType.ENTER.name) {
-            logger().info("채팅방 입장")
-            chatRoomMateRepository.save(ChatRoomMember(member, chatRoom))
-            ChatRequestDTO.message = member.nickname + "님이 입장했습니다."
-        } else if(ChatRequestDTO.chatType == ChatType.SEND.name) {
-            logger().info("채팅 발송")
-            ChatRequestDTO.sender = member.nickname
-        }
-
+        ChatRequestDTO.sender = member.nickname
         val chat: Chat = Chat(ChatRequestDTO.message, member, chatRoom);
         chatRepository.save(chat)
 
@@ -61,10 +53,16 @@ class MessageService(
     }
 
     fun exitChatRoom(accessToken: String, roomId: Long) {
-        val user = tokenProvider.parseTokenInfo(accessToken);
-        val member: Member =  user.username
+        val user = tokenProvider.parseTokenInfo(accessToken)
+        val member: Member = user.username
             .let { memberRepository.findByEmail(it) }
-            ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
+            ?: run { throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER) }
+        val chatRoom: ChatRoom = chatRoomRepository.findById(roomId)
+            .orElseThrow { CustomException(CustomExceptionCode.CHAT_ROOM_NOT_FOUND) }
 
+        chatRoomMemberRepository.findByMemberIdAndChatRoomId(member.id, chatRoom.id!!)
+            ?. let {
+                chatRoomMemberRepository.delete(it)
+            }
     }
 }

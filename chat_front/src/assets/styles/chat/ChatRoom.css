@@ -81,6 +81,7 @@
 .chat-room-info {
     display: flex;
     flex-direction: column;
+    width:50%;
 }
   
 .chat-room-info h3 {
@@ -93,6 +94,11 @@
     margin-top: 2px;
     font-size: 14px;
     color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+
 }
   
 .chat-room-info .last-message {

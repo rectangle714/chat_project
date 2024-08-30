@@ -96,7 +96,7 @@
 .chat_wrap .chat ul li > div.message{
     display: inline-block;
     word-break: break-all;
-    margin: 5px 20px;
+    margin: 5px 10px;
     max-width: 75;
     border: 1px solid #888;
     padding: 10px;
@@ -104,6 +104,7 @@
     background-color: #FCFCFC;
     color: #555;
     text-align: left;
+    max-width: 30%;
 }
 
 .chat_wrap .input-div{

@@ -30,6 +30,7 @@ class ChatRepositoryImpl(
                     registerDate.`as`("registerDate"),
                     chatRoom.id.`as`("chatRoomId"),
                     member.nickname.`as`("sender"),
+                    chat.isAlert
                 )
             )
             .from(chat)

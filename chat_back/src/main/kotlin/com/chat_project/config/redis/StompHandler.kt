@@ -7,8 +7,10 @@ import com.chat_project.exception.CustomExceptionCode
 import com.chat_project.security.TokenProvider
 import com.chat_project.web.chat.dto.ChatResponseDTO
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
+import com.chat_project.web.chat.entity.Chat
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
+import com.chat_project.web.chat.repository.chat.ChatRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
 import com.chat_project.web.chat.service.ChatRoomService
 import com.chat_project.web.member.dto.MemberDTO
@@ -40,6 +42,7 @@ class StompHandler(
     private val chatRoomService: ChatRoomService,
     private val modelMapper: ModelMapper,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val chatRepository: ChatRepository,
     private val redisUtil: RedisUtil
 ): ChannelInterceptor {
     val logger = logger()
@@ -84,6 +87,7 @@ class StompHandler(
                 ?: run {
                     val member: Member = modelMapper.map(memberDTO, Member::class.java)
                     chatRoomMemberRepository.save(ChatRoomMember(member, chatRoom!!))
+                    chatRepository.save(Chat("'${member.nickname}'님이 입장 했습니다.", member, chatRoom!!, "Y"))
                 }
 
         } else if(StompCommand.DISCONNECT == accessor.command) {

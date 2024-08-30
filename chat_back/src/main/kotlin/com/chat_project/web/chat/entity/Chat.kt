@@ -8,13 +8,17 @@ import jakarta.persistence.*
 class Chat(
     message: String,
     member: Member?,
-    chatRoom: ChatRoom
+    chatRoom: ChatRoom,
+    isAlert: String = "N"
 ): BaseEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_id")
     var id:Long? = null
 
     var message = message
+        protected set
+
+    var isAlert = isAlert
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)

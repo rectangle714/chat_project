@@ -159,7 +159,7 @@ const CreateChatRoomForm = () => {
                         }
                         {id && isRegister == true ?
                             <span style={{paddingLeft:'10px'}}>
-                                <Button style={{paddingLeft: '20px'}} variant='contained' onClick={deleteRoomBtn}>삭제</Button>
+                                <Button variant='contained' onClick={deleteRoomBtn}>삭제</Button>
                             </span>: ''
                         }
                     </div>
