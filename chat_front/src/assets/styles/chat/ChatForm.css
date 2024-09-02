@@ -125,3 +125,107 @@
 .format{
     display: none;
 }
+
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+  
+.attach-button {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+  
+.attach-button:hover {
+    background-color: #e0e0e0;
+}
+  
+.attach-icon {
+    margin-right: 8px;
+}
+  
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+  
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+  
+.close-popup {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    float: right;
+}
+  
+.file-list {
+    margin-top: 15px;
+}
+  
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+  
+.file-name {
+    flex-grow: 1;
+}
+  
+.remove-button {
+    background-color: #ff5c5c;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    color: white;
+    cursor: pointer;
+}
+  
+.remove-button:hover {
+    background-color: #ff1c1c;
+}
+
+.confirm-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+}
+  
+.confirm-button:hover {
+    background-color: #45a049;
+}

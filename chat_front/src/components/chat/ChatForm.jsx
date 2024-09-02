@@ -10,6 +10,8 @@ import settingImg from '@assets/images/setting.png'
 import attachImg from '@assets/images/attach.png'
 import sendImg from '@assets/images/send.png'
 import Cookies from 'js-cookie';
+import ReactDOM from 'react-dom';
+import Layout from '@layout/Layout';
 
 const ChatForm = () => {
     const URL = process.env.REACT_APP_WS_URL;
@@ -17,6 +19,11 @@ const ChatForm = () => {
     const { accessToken, reissue } = useAuth();
     const chatEndRef = useRef(null);
     const [member, setMember] = useState({email: '', nickname: ''});
+
+    // 선택된 파일들을 저장할 state
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const fileInputRef = useRef(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
@@ -42,6 +49,30 @@ const ChatForm = () => {
             navigate('/login');
         }
     }
+
+    // 이미지 클릭 시 파일 선택 창 열기
+    const handleImageClick = () => {
+        fileInputRef.current.click(); // 숨겨진 input 요소 클릭
+    };
+    
+    // 파일 팝업 닫기
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
+
+    // 파일이 선택되었을 때 처리
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        setSelectedFiles(prevFiles => [...prevFiles, ...files]); // 선택된 파일들을 배열에 추가
+        setIsPopupOpen(true);  // 파일 선택 후 팝업 열기
+    };
+
+
+    // 파일 리스트에서 특정 파일 제거
+    const handleRemoveFile = (index) => {
+        setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+        if(selectedFiles.length == 1) handleClosePopup();
+    };
 
     /* 채팅목록 조회 */
     const getChatting = async() => {
@@ -139,12 +170,16 @@ const ChatForm = () => {
         }
     }
 
+    /* 메세지 전송 */
     const sendMessage = async(message) => {
         if(message == '') { return false; }
-        
+
         if(Cookies.get('accessToken')) {
             client.publish({
                 destination: '/pub/message',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
                 body: JSON.stringify({
                     "chatRoomId" : id,
                     "chatType" : "SEND",
@@ -157,6 +192,9 @@ const ChatForm = () => {
 
             client.publish({
                 destination: '/pub/message',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
                 body: JSON.stringify({
                     "chatRoomId" : id,
                     "chatType" : "SEND",
@@ -198,10 +236,44 @@ const ChatForm = () => {
         sendMessage(textareaValue);
     }
 
-    /* 파일첨부 버튼 이벤트 */
-    const handleAttachClick = (e) => {
+    // 팝업 닫기 및 파일 전송
+    const handleConfirmFiles = () => {
+        const filesData = [];
+
+        const readFile = (file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const arrayBuffer = reader.result;
+                    filesData.push({    
+                        fileName: file.name,
+                        fileData: arrayBuffer,
+                    });
+                    
+                    resolve();
+                };
+                
+                reader.readAsArrayBuffer(file); // 파일을 ArrayBuffer로 읽음
+            });
+        };
+
+        Promise.all(selectedFiles.map(readFile)).then(() => {
+            client.publish({
+                destination: '/pub/message',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                body: JSON.stringify({
+                    "chatRoomId" : id,
+                    "accessToken" : accessToken,
+                    "file": filesData
+                })
+            })
+        })
         
-    }
+        setIsPopupOpen(false);  // 팝업 닫기
+        console.log("확정된 파일들:", selectedFiles);
+    };
 
     /* 방 설정 이벤트 */
     const handleSettingClick = (e) => {
@@ -256,15 +328,40 @@ const ChatForm = () => {
                 <div style={{textAlign:'right'}}>
                     <span>
                         <IconButton variant='contained'>
-                            <img src={attachImg} alt='attach image' onClick={handleSendClick} className={'attach_img'}/>
+                            <img src={attachImg} alt='attach image' onClick={handleImageClick} className={'attach_img'}/>
                         </IconButton>
                     </span>
                     <span>
                         <IconButton variant='contained'>
-                            <img src={sendImg} alt='send image' onClick={handleAttachClick} className={'send_img'}/>
+                            <img src={sendImg} alt='send image' onClick={handleSendClick} className={'send_img'}/>
                         </IconButton>
+                        <input
+                            type="file" 
+                            ref={fileInputRef} 
+                            style={{ display: 'none' }} 
+                            onChange={handleFileChange} 
+                        />
                     </span>
                 </div>
+                {/* 팝업 창 */}
+                {isPopupOpen && ReactDOM.createPortal(
+                    <div className="popup-overlay">
+                        <div className="popup-content">
+                            <button className="close-popup" onClick={handleClosePopup}>X</button>
+                            <h2>파일 전송</h2>
+                            <div className="file-list">
+                            {selectedFiles.map((file, index) => (
+                                <div key={index} className="file-item">
+                                    <span className="file-name">{file.name}</span>
+                                    <button className="remove-button" onClick={() => handleRemoveFile(index)}>X</button>
+                                </div>
+                            ))}
+                            </div>
+                            <button className="confirm-button" onClick={handleConfirmFiles}>전송</button>
+                        </div>
+                    </div>,
+                    document.body  // 팝업을 최상위 레벨에 렌더링
+                )}
             </div>
         </div>
     );

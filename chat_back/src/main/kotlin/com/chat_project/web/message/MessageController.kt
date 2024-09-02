@@ -19,8 +19,12 @@ class MessageController(
 
     /* 메세지 전송 */
     @MessageMapping("/message")
-    fun message(@Payload chatRequestDTO: ChatRequestDTO)
-        = messageService.sendMessage(chatRequestDTO)
+    fun message(@Payload chatRequestDTO: ChatRequestDTO) {
+        chatRequestDTO.file?.let { file ->
+            messageService.handleFileUpload(file) // 파일 처리 서비스 호출
+        }
+        messageService.sendMessage(chatRequestDTO)
+    }
 
     /* 채팅방 입장 */
     @MessageMapping("/chatRoom/join/{roomId}")

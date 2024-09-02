@@ -25,6 +25,7 @@ import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.lang.IllegalArgumentException
 
 @Service
@@ -55,6 +56,10 @@ class MessageService(
 
         redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(ChatRequestDTO::class.java)
         redisTemplate.convertAndSend(channelTopic.topic, ChatRequestDTO)
+    }
+
+    fun handleFileUpload(multipartFile: List<MultipartFile>?) {
+
     }
 
     fun joinChatRoom(accessToken: String, roomId: Long) {
