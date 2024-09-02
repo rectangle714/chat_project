@@ -19,7 +19,7 @@ class ChatRoomRepositoryImpl(
         val lastMessageRegisterDateSubQuery = JPAExpressions
             .select(chat.registerDate.max())
             .from(chat)
-            .where(chat.chatRoom.id.eq(chatRoom.id))
+            .where(chat.chatRoom.id.eq(chatRoom.id).and(chat.isAlert.ne("Y")))
 
         val memberCountSubQuery = JPAExpressions
             .select(chatRoomMember.count())

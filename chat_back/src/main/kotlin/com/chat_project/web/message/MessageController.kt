@@ -22,8 +22,13 @@ class MessageController(
     fun message(@Payload chatRequestDTO: ChatRequestDTO)
         = messageService.sendMessage(chatRequestDTO)
 
+    /* 채팅방 입장 */
+    @MessageMapping("/chatRoom/join/{roomId}")
+    fun joinChatRoom(@Header("Authorization") accessToken: String, @DestinationVariable("roomId") roomId: Long)
+        = messageService.joinChatRoom(accessToken, roomId)
+
     /* 채팅방 퇴장 */
     @MessageMapping("/chatRoom/exit/{roomId}")
-    fun exitChatRoom( @Header("Authorization") accessToken: String, @DestinationVariable("roomId") roomId: Long)
+    fun exitChatRoom(@Header("Authorization") accessToken: String, @DestinationVariable("roomId") roomId: Long)
         = messageService.exitChatRoom(accessToken, roomId)
 }

@@ -5,6 +5,6 @@ data class ChatRequestDTO(
     val memberId: Long? = 0,
     var message: String = "",
     var sender: String = "",
-    val chatType: String = "",
-    val accessToken: String = ""
+    val accessToken: String = "",
+    var alert: String= ""
 )

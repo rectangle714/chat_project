@@ -32,7 +32,7 @@ class RedisSubscriber(
 
             messagingTemplate.convertAndSend("/sub/chat/room/"+ chatRequestDTO.chatRoomId,
                                                 mapOf("sender" to chatRequestDTO.sender, "message" to chatRequestDTO.message
-                                                        , "registerDate" to registerDate))
+                                                        , "registerDate" to registerDate, "isAlert" to chatRequestDTO.alert))
         } catch(e: Exception) {
             logger.error("채팅 에러 발생 : {}",e.message)
         }

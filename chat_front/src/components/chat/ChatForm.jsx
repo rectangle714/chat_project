@@ -86,6 +86,18 @@ const ChatForm = () => {
                 heartbeatOutgoing: 4000,
                 onConnect: function(frame) {
                     clientData.subscribe(`/sub/chat/room/${id}`, callback);
+
+                    try {
+                        clientData.publish({
+                            destination: `/pub/chatRoom/join/${id}`,
+                            headers: {
+                                Authorization: accessToken
+                            }
+                        });
+                    } catch(error) {
+                        console.log('error ',error);
+                    }
+
                 },
             });
     
@@ -99,10 +111,14 @@ const ChatForm = () => {
     const callback = function(message) {
         if(message.body) {
             const msg = JSON.parse(message.body);
-            if(msg.sender != member.nickname) {
-                appendMessageTag('left', msg.sender, msg.message, msg.registerDate);
+            if(msg.isAlert != 'Y') {
+                if(msg.sender != member.nickname) {
+                    appendMessageTag('left', msg.sender, msg.message, msg.registerDate);
+                } else {
+                    appendMessageTag('right', msg.sender, msg.message, msg.registerDate);
+                }
             } else {
-                appendMessageTag('right', msg.sender, msg.message, msg.registerDate);
+                appendMessageTag('center', msg.sender, msg.message, msg.registerDate);
             }
         }
     }
@@ -111,7 +127,6 @@ const ChatForm = () => {
         if(client === null) { return; }
 
         try {
-            console.log('disConnection');
             client.publish({
                 destination: `/pub/chatRoom/exit/${id}`,
                 headers: {
@@ -157,6 +172,7 @@ const ChatForm = () => {
         setMessages(prevMessages => [...prevMessages, newMessage]);
     };
 
+    /* Enter Key 이벤트 */
     const handleEnter = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -167,10 +183,10 @@ const ChatForm = () => {
 
     const handleChange = (e) => { setTextareaValue(e.target.value); };
 
-    /* 로그아웃 이벤트 */
-    const handleLogoutClick = (e) => {
+    /* 퇴장 이벤트 */
+    const handleExitClick = async(e) => {
         if(window.confirm('채팅방을 나가시겠습니까?')) {
-            disConnection();
+            await disConnection();
             window.location.href = '/chatRoom';
         }
     }
@@ -182,8 +198,9 @@ const ChatForm = () => {
         sendMessage(textareaValue);
     }
 
+    /* 파일첨부 버튼 이벤트 */
     const handleAttachClick = (e) => {
-
+        
     }
 
     /* 방 설정 이벤트 */
@@ -205,7 +222,7 @@ const ChatForm = () => {
                     <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
                     <span style={{textAlign:'right'}}>
                         <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
-                        <img src={logoutImg} alt='logout image' onClick={handleLogoutClick} className={'logout_img'}/>
+                        <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/>
                     </span>
             </div>
             <div className="chat">
