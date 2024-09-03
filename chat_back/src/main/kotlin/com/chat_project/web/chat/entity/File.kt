@@ -7,6 +7,7 @@ import jakarta.persistence.*
 class File(
     originFileName: String,
     storedFileName: String,
+    fileType: String,
     fileSize: Long?,
     chat: Chat
 ): AuditableEntity() {
@@ -22,6 +23,9 @@ class File(
         protected set
 
     var fileSize = fileSize
+        protected set
+
+    var fileType = fileType
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)

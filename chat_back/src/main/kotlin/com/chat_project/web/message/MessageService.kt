@@ -8,12 +8,15 @@ import com.chat_project.security.TokenProvider
 import com.chat_project.web.chat.dto.ChatRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
+import com.chat_project.web.chat.dto.FileDTO
 import com.chat_project.web.chat.entity.Chat
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
+import com.chat_project.web.chat.entity.File
 import com.chat_project.web.chat.repository.chat.ChatRepository
 import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
+import com.chat_project.web.chat.repository.file.FileRepository
 import com.chat_project.web.chat.service.ChatRoomService
 import com.chat_project.web.member.dto.MemberDTO
 import com.chat_project.web.member.entity.Member
@@ -27,6 +30,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.lang.IllegalArgumentException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.Base64
 
 @Service
 @Transactional(rollbackFor = [ Exception::class ])
@@ -37,11 +44,21 @@ class MessageService(
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val memberRepository: MemberRepository,
     private val memberService: MemberService,
+    private val fileRepository: FileRepository,
     private val channelTopic: ChannelTopic,
     private val redisTemplate: StringRedisTemplate,
     private val modelMapper: ModelMapper,
     private val tokenProvider: TokenProvider
 ) {
+    val logger = logger()
+
+    private val uploadDir: Path = Paths.get("uploads")
+
+    init {
+        Files.createDirectories(uploadDir)
+    }
+
+
     fun sendMessage(ChatRequestDTO: ChatRequestDTO) {
         val user = tokenProvider.parseTokenInfo(ChatRequestDTO.accessToken)
         val member: Member =  user.username
@@ -58,8 +75,38 @@ class MessageService(
         redisTemplate.convertAndSend(channelTopic.topic, ChatRequestDTO)
     }
 
-    fun handleFileUpload(multipartFile: List<MultipartFile>?) {
+    fun handleFileUpload(fileDTO: FileDTO?) {
+        val originFileName = fileDTO?.fileName ?: "unknown"
+        val fileData = Base64.getDecoder().decode(fileDTO?.fileData)
+        val storedFileName = generateStoredFileName(originFileName)
 
+        // Base64로 인코딩된 파일 데이터 디코딩
+        val decodedFileData = fileDTO?.fileData?.let { Base64.getDecoder().decode(it) } ?: ByteArray(0)
+
+        // 파일 시스템에 저장
+        val filePath = uploadDir.resolve(storedFileName)
+        Files.write(filePath, decodedFileData)
+
+//        val file = File(
+//            originFileName = originFileName,
+//            storedFileName = storedFileName,
+//            fileType = fileDTO?.fileType ?: "",
+//            fileSize = fileDTO?.fileSize ?: 0,
+//            chat = Chat()
+//        )
+//        fileRepository.save()
+    }
+
+    fun getFile(storedFileName: String): ByteArray {
+        val fileEntity = fileRepository.findByStoredFileName(storedFileName)
+            ?: throw RuntimeException("File not found")
+
+        return Files.readAllBytes(uploadDir.resolve(fileEntity.storedFileName))
+    }
+
+    private fun generateStoredFileName(originFileName: String): String {
+        val extension = originFileName.substringAfterLast('.', "")
+        return "${System.currentTimeMillis()}_${originFileName}"
     }
 
     fun joinChatRoom(accessToken: String, roomId: Long) {

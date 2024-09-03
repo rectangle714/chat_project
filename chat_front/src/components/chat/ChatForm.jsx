@@ -177,9 +177,6 @@ const ChatForm = () => {
         if(Cookies.get('accessToken')) {
             client.publish({
                 destination: '/pub/message',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
                 body: JSON.stringify({
                     "chatRoomId" : id,
                     "chatType" : "SEND",
@@ -192,9 +189,6 @@ const ChatForm = () => {
 
             client.publish({
                 destination: '/pub/message',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
                 body: JSON.stringify({
                     "chatRoomId" : id,
                     "chatType" : "SEND",
@@ -237,42 +231,50 @@ const ChatForm = () => {
     }
 
     // 팝업 닫기 및 파일 전송
-    const handleConfirmFiles = () => {
-        const filesData = [];
-
+    const handleConfirmFiles = async() => {
         const readFile = (file) => {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    const arrayBuffer = reader.result;
-                    filesData.push({    
+                    const binaryData = reader.result;
+                    const base64Data = btoa(
+                        new Uint8Array(binaryData)
+                            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+                    );
+                    resolve({
                         fileName: file.name,
-                        fileData: arrayBuffer,
+                        fileData: base64Data, // Base64로 인코딩된 데이터
+                        fileType: file.type,
+                        fileSize: file.size
                     });
-                    
-                    resolve();
                 };
-                
-                reader.readAsArrayBuffer(file); // 파일을 ArrayBuffer로 읽음
+                reader.onerror = (error) => {
+                    console.error('Error reading file:', error);
+                    reject(error);
+                };
+                reader.readAsArrayBuffer(file); // ArrayBuffer로 파일 읽기
             });
         };
 
-        Promise.all(selectedFiles.map(readFile)).then(() => {
+        try {
+            const fileData = await readFile(selectedFiles[0]);
             client.publish({
-                destination: '/pub/message',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
+                destination: '/pub/sendFile',
+                headers: '',
                 body: JSON.stringify({
-                    "chatRoomId" : id,
-                    "accessToken" : accessToken,
-                    "file": filesData
+                    chatRoomId: id,
+                    accessToken: accessToken,
+                    file: fileData
                 })
-            })
-        })
+            });
+        } catch (error) {
+            console.error('파일 처리 중 오류 발생:', error);
+        }
+    
         
         setIsPopupOpen(false);  // 팝업 닫기
         console.log("확정된 파일들:", selectedFiles);
+        setSelectedFiles([]);
     };
 
     /* 방 설정 이벤트 */
@@ -327,13 +329,13 @@ const ChatForm = () => {
                 />
                 <div style={{textAlign:'right'}}>
                     <span>
-                        <IconButton variant='contained'>
-                            <img src={attachImg} alt='attach image' onClick={handleImageClick} className={'attach_img'}/>
+                        <IconButton variant='contained' onClick={handleImageClick}>
+                            <img src={attachImg} alt='attach image' className={'attach_img'}/>
                         </IconButton>
                     </span>
                     <span>
-                        <IconButton variant='contained'>
-                            <img src={sendImg} alt='send image' onClick={handleSendClick} className={'send_img'}/>
+                        <IconButton variant='contained' onClick={handleSendClick}>
+                            <img src={sendImg} alt='send image' className={'send_img'}/>
                         </IconButton>
                         <input
                             type="file" 
