@@ -13,4 +13,7 @@ enum class CustomExceptionCode(
 
     /* 채팅방 관련 Exception */
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "해당 채팅방을 찾을 수 없습니다."),
+
+    /* 파일 관련 EXception */
+    BAD_FILE_INFO(HttpStatus.BAD_REQUEST.value(), "잘못된 파일 정보입니다.")
 }

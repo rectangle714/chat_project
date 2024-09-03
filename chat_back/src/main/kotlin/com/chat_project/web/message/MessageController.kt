@@ -4,6 +4,7 @@ import com.chat_project.security.TokenProvider
 import com.chat_project.web.chat.dto.ChatRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomRequestDTO
 import com.chat_project.web.chat.dto.FileDTO
+import com.chat_project.web.chat.repository.file.FileService
 import com.chat_project.web.member.repository.MemberRepository
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.messaging.handler.annotation.DestinationVariable
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Controller
 class MessageController(
     private val tokenProvider: TokenProvider,
     private val memberRepository: MemberRepository,
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val fileService: FileService
     ) {
 
     /* 메세지 전송 */
@@ -27,12 +29,12 @@ class MessageController(
     /* 파일 전송 */
     @MessageMapping("/sendFile")
     fun sendFile(@Payload chatRequestDTO: ChatRequestDTO)
-        = messageService.handleFileUpload(chatRequestDTO.file)
+        = fileService.fileUpload(chatRequestDTO)
 
     /* 파일 다운로드 */
     @MessageMapping(("/download/{id}"))
     fun downloadFile(storedFileName: String, response: HttpServletResponse) {
-        val fileData = messageService.getFile(storedFileName)
+        val fileData = fileService.getFile(storedFileName)
         response.contentType = "application/octet-stream"
         response.setHeader("Content-Disposition", "attachment; filename=\"$storedFileName\"")
         response.outputStream.write(fileData)

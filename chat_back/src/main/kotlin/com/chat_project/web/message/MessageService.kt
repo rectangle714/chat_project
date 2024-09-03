@@ -52,61 +52,20 @@ class MessageService(
 ) {
     val logger = logger()
 
-    private val uploadDir: Path = Paths.get("uploads")
-
-    init {
-        Files.createDirectories(uploadDir)
-    }
-
-
-    fun sendMessage(ChatRequestDTO: ChatRequestDTO) {
-        val user = tokenProvider.parseTokenInfo(ChatRequestDTO.accessToken)
+    fun sendMessage(chatRequestDTO: ChatRequestDTO) {
+        val user = tokenProvider.parseTokenInfo(chatRequestDTO.accessToken)
         val member: Member =  user.username
                                 .let { memberRepository.findByEmail(it) }
                                 ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
-        val chatRoom: ChatRoom = ChatRequestDTO.chatRoomId
+        val chatRoom: ChatRoom = chatRequestDTO.chatRoomId
             ?.let { chatRoomRepository.findById(it).get() }
             ?: throw CustomException(CustomExceptionCode.CHAT_ROOM_NOT_FOUND)
 
-        ChatRequestDTO.sender = member.nickname
-        chatRepository.save(Chat(ChatRequestDTO.message, member, chatRoom))
+        chatRequestDTO.sender = member.nickname
+        chatRepository.save(Chat(chatRequestDTO.message, member, chatRoom))
 
         redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(ChatRequestDTO::class.java)
-        redisTemplate.convertAndSend(channelTopic.topic, ChatRequestDTO)
-    }
-
-    fun handleFileUpload(fileDTO: FileDTO?) {
-        val originFileName = fileDTO?.fileName ?: "unknown"
-        val fileData = Base64.getDecoder().decode(fileDTO?.fileData)
-        val storedFileName = generateStoredFileName(originFileName)
-
-        // Base64로 인코딩된 파일 데이터 디코딩
-        val decodedFileData = fileDTO?.fileData?.let { Base64.getDecoder().decode(it) } ?: ByteArray(0)
-
-        // 파일 시스템에 저장
-        val filePath = uploadDir.resolve(storedFileName)
-        Files.write(filePath, decodedFileData)
-
-//        val file = File(
-//            originFileName = originFileName,
-//            storedFileName = storedFileName,
-//            fileType = fileDTO?.fileType ?: "",
-//            fileSize = fileDTO?.fileSize ?: 0,
-//            chat = Chat()
-//        )
-//        fileRepository.save()
-    }
-
-    fun getFile(storedFileName: String): ByteArray {
-        val fileEntity = fileRepository.findByStoredFileName(storedFileName)
-            ?: throw RuntimeException("File not found")
-
-        return Files.readAllBytes(uploadDir.resolve(fileEntity.storedFileName))
-    }
-
-    private fun generateStoredFileName(originFileName: String): String {
-        val extension = originFileName.substringAfterLast('.', "")
-        return "${System.currentTimeMillis()}_${originFileName}"
+        redisTemplate.convertAndSend(channelTopic.topic, chatRequestDTO)
     }
 
     fun joinChatRoom(accessToken: String, roomId: Long) {
