@@ -46,7 +46,7 @@ class ChatRoomService(
     fun updateChatRoom(chatRoomDTO: ChatRoomRequestDTO): String {
         val chatRoom: ChatRoom = chatRoomRepository.findById(chatRoomDTO.id)
             .orElseThrow { IllegalArgumentException("채팅방을 찾을 수 없습니다. ID: ${chatRoomDTO.id}") }
-        chatRoom.update(chatRoomDTO.roomName!!, chatRoomDTO.numberPeople!!)
+        chatRoom.update(chatRoomDTO.roomName, chatRoomDTO.numberPeople)
         return "success"
     }
 

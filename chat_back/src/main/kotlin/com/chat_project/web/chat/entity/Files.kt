@@ -2,9 +2,10 @@ package com.chat_project.web.chat.entity
 
 import com.chat_project.common.AuditableEntity
 import jakarta.persistence.*
+import org.springframework.context.annotation.Description
 
-@Entity
-class File(
+@Entity(name = "File")
+class Files(
     originFileName: String,
     storedFileName: String,
     fileType: String,

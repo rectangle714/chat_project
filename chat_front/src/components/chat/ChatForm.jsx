@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@stores/authProvider';
 import { IconButton } from "@mui/material";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import SockJS from 'sockjs-client';
 import * as StompJs from "@stomp/stompjs";
 import api from '@stores/api';
 import "@styles/chat/ChatForm.css";
@@ -11,7 +12,6 @@ import attachImg from '@assets/images/attach.png'
 import sendImg from '@assets/images/send.png'
 import Cookies from 'js-cookie';
 import ReactDOM from 'react-dom';
-import Layout from '@layout/Layout';
 
 const ChatForm = () => {
     const URL = process.env.REACT_APP_WS_URL;
@@ -30,7 +30,7 @@ const ChatForm = () => {
     const [client, setClient] = useState(null);
     const { id } = useParams();
     const location = useLocation();
-    const roomName = location.state.roomName;
+    const roomName = location.state.roomName ? location.state.roomName : '';
 
     /* 사용자 정보 조회 */
     const getMember = async() => {
@@ -103,8 +103,10 @@ const ChatForm = () => {
     /* 웹소켓 연결 */
     const connection = () => {
         try{
+            const socket = new SockJS(`http://${URL}/ws`);
+            
             const clientData = new StompJs.Client({
-                brokerURL: `ws://${URL}/ws`,
+                webSocketFactory: () => socket,
                 connectHeaders: {
                     Authorization: accessToken,
                     room_id: id
@@ -236,14 +238,13 @@ const ChatForm = () => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    const binaryData = reader.result;
-                    const base64Data = btoa(
-                        new Uint8Array(binaryData)
+                    const base64Data  = btoa(
+                        new Uint8Array(reader.result)
                             .reduce((data, byte) => data + String.fromCharCode(byte), '')
                     );
                     resolve({
                         fileName: file.name,
-                        fileData: base64Data, // Base64로 인코딩된 데이터
+                        fileData: base64Data,
                         fileType: file.type,
                         fileSize: file.size
                     });
@@ -252,25 +253,27 @@ const ChatForm = () => {
                     console.error('Error reading file:', error);
                     reject(error);
                 };
-                reader.readAsArrayBuffer(file); // ArrayBuffer로 파일 읽기
+                reader.readAsArrayBuffer(file); // 파일을 Base64로 인코딩된
             });
         };
 
         try {
             const fileData = await readFile(selectedFiles[0]);
+            console.log(fileData);
             client.publish({
                 destination: '/pub/sendFile',
-                headers: '',
                 body: JSON.stringify({
                     chatRoomId: id,
-                    accessToken: accessToken,
                     file: fileData
                 })
             });
+
+            const fileURL = window.URL.createObjectURL(selectedFiles[0]);
+            const aTag = <a href={fileURL} download={fileData.fileName}>{fileData.fileName}</a>;
+            appendMessageTag('right', '사용자', aTag, '');
         } catch (error) {
             console.error('파일 처리 중 오류 발생:', error);
         }
-    
         
         setIsPopupOpen(false);  // 팝업 닫기
         console.log("확정된 파일들:", selectedFiles);

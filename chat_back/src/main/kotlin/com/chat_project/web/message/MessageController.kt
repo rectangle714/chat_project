@@ -34,10 +34,14 @@ class MessageController(
     /* 파일 다운로드 */
     @MessageMapping(("/download/{id}"))
     fun downloadFile(storedFileName: String, response: HttpServletResponse) {
-        val fileData = fileService.getFile(storedFileName)
+        val fileInputStream = fileService.getFile(storedFileName)
         response.contentType = "application/octet-stream"
         response.setHeader("Content-Disposition", "attachment; filename=\"$storedFileName\"")
-        response.outputStream.write(fileData)
+        fileInputStream.use { inputStream ->
+            response.outputStream.use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
     }
 
     /* 채팅방 입장 */

@@ -1,18 +1,14 @@
 package com.chat_project.web.message
 
-import com.chat_project.common.constant.ChatType
 import com.chat_project.common.util.logger
 import com.chat_project.exception.CustomException
 import com.chat_project.exception.CustomExceptionCode
 import com.chat_project.security.TokenProvider
 import com.chat_project.web.chat.dto.ChatRequestDTO
-import com.chat_project.web.chat.dto.ChatRoomRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
-import com.chat_project.web.chat.dto.FileDTO
 import com.chat_project.web.chat.entity.Chat
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
-import com.chat_project.web.chat.entity.File
 import com.chat_project.web.chat.repository.chat.ChatRepository
 import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
@@ -28,12 +24,6 @@ import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
-import java.lang.IllegalArgumentException
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.Base64
 
 @Service
 @Transactional(rollbackFor = [ Exception::class ])
