@@ -29,20 +29,7 @@ class MessageController(
     /* 파일 전송 */
     @MessageMapping("/sendFile")
     fun sendFile(@Payload chatRequestDTO: ChatRequestDTO)
-        = fileService.fileUpload(chatRequestDTO)
-
-    /* 파일 다운로드 */
-    @MessageMapping(("/download/{id}"))
-    fun downloadFile(storedFileName: String, response: HttpServletResponse) {
-        val fileInputStream = fileService.getFile(storedFileName)
-        response.contentType = "application/octet-stream"
-        response.setHeader("Content-Disposition", "attachment; filename=\"$storedFileName\"")
-        fileInputStream.use { inputStream ->
-            response.outputStream.use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-    }
+        = messageService.sendFile(chatRequestDTO)
 
     /* 채팅방 입장 */
     @MessageMapping("/chatRoom/join/{roomId}")

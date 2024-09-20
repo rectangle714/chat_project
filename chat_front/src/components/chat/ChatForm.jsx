@@ -14,7 +14,7 @@ import Cookies from 'js-cookie';
 import ReactDOM from 'react-dom';
 
 const ChatForm = () => {
-    const URL = process.env.REACT_APP_WS_URL;
+    const URL = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     const { accessToken, reissue } = useAuth();
     const chatEndRef = useRef(null);
@@ -74,6 +74,23 @@ const ChatForm = () => {
         if(selectedFiles.length == 1) handleClosePopup();
     };
 
+    // 파일 다운로드
+    const handleFileDownload = async(fileId, fileName) => {
+        const response = await api.get(`/api/file/download/${fileId}`, {
+            responseType: 'blob'
+        })
+        if(response) {
+            // Blob을 이용해 파일 다운로드
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);  // 원하는 파일명과 확장자 설정
+            document.body.appendChild(link);
+            link.click();
+        }
+    }
+
+
     /* 채팅목록 조회 */
     const getChatting = async() => {
         try {
@@ -87,9 +104,27 @@ const ChatForm = () => {
             chatArray.forEach(chat => {
                 if(chat.isAlert != 'Y') {
                     if(chat.sender != member.nickname) {
-                        appendMessageTag('left', chat.sender, chat.message, chat.registerDate);
+                        if(chat.isFile != 'Y') {
+                            appendMessageTag('left', chat.sender, chat.message, chat.registerDate);
+                        } else {
+                            const fileTag = <a style={{
+                                                color:'blue',
+                                                textDecoration:'underline',
+                                                cursor:'pointer'
+                                            }} onClick={() => handleFileDownload(chat.fileId, chat.message)}>{chat.message}</a>;
+                            appendMessageTag('left', chat.sender, fileTag, chat.registerDate);
+                        }
                     } else {
-                        appendMessageTag('right', chat.sender, chat.message, chat.registerDate);
+                        if(chat.isFile != 'Y') {
+                            appendMessageTag('right', chat.sender, chat.message, chat.registerDate);
+                        } else {
+                            const fileTag = <a style={{
+                                                    color:'blue',
+                                                    textDecoration:'underline',
+                                                    cursor:'pointer'
+                                            }} onClick={() => handleFileDownload(chat.fileId, chat.message)}>{chat.message}</a>;
+                            appendMessageTag('right', chat.sender, fileTag, chat.registerDate);
+                        }
                     }
                 } else {
                     appendMessageTag('center', chat.sender, chat.message, chat.registerDate);
@@ -103,7 +138,7 @@ const ChatForm = () => {
     /* 웹소켓 연결 */
     const connection = () => {
         try{
-            const socket = new SockJS(`http://${URL}/ws`);
+            const socket = new SockJS(`${URL}/ws`);
             
             const clientData = new StompJs.Client({
                 webSocketFactory: () => socket,
@@ -146,9 +181,27 @@ const ChatForm = () => {
             const msg = JSON.parse(message.body);
             if(msg.isAlert != 'Y') {
                 if(msg.sender != member.nickname) {
-                    appendMessageTag('left', msg.sender, msg.message, msg.registerDate);
+                    if(msg.isFile != 'Y') {
+                        appendMessageTag('left', msg.sender, msg.message, msg.registerDate);
+                    } else {
+                        const fileTag = <a style={{
+                            color:'blue',
+                            textDecoration:'underline',
+                            cursor:'pointer'
+                        }} onClick={() => handleFileDownload(msg.fileId, msg.message)}>{msg.message}</a>;
+                        appendMessageTag('left', msg.sender, fileTag, msg.registerDate);
+                    }
                 } else {
-                    appendMessageTag('right', msg.sender, msg.message, msg.registerDate);
+                    if(msg.isFile != 'Y') {
+                        appendMessageTag('right', msg.sender, msg.message, msg.registerDate);
+                    } else {
+                        const fileTag = <a style={{
+                            color:'blue',
+                            textDecoration:'underline',
+                            cursor:'pointer'
+                        }} onClick={() => handleFileDownload(msg.fileId, msg.message)}>{msg.message}</a>;
+                        appendMessageTag('right', msg.sender, fileTag, msg.registerDate);
+                    }
                 }
             } else {
                 appendMessageTag('center', msg.sender, msg.message, msg.registerDate);
@@ -253,30 +306,46 @@ const ChatForm = () => {
                     console.error('Error reading file:', error);
                     reject(error);
                 };
-                reader.readAsArrayBuffer(file); // 파일을 Base64로 인코딩된
+                reader.readAsArrayBuffer(file);
             });
         };
 
         try {
             const fileData = await readFile(selectedFiles[0]);
-            console.log(fileData);
-            client.publish({
-                destination: '/pub/sendFile',
-                body: JSON.stringify({
-                    chatRoomId: id,
-                    file: fileData
-                })
-            });
+            if(Cookies.get('accessToken')) {
+                client.publish({
+                    destination: '/pub/sendFile',
+                    headers: {
+                        Authorization: accessToken
+                    },
+                    body: JSON.stringify({
+                        chatRoomId: id,
+                        file: fileData,
+                        "chatType" : "SEND",
+                        "accessToken" : accessToken
+                    })
+                });
+            } else {
+                await reissue();
 
-            const fileURL = window.URL.createObjectURL(selectedFiles[0]);
-            const aTag = <a href={fileURL} download={fileData.fileName}>{fileData.fileName}</a>;
-            appendMessageTag('right', '사용자', aTag, '');
+                client.publish({
+                    destination: '/pub/sendFile',
+                    headers: {
+                        Authorization: Cookies.get('accessToken')
+                    },
+                    body: JSON.stringify({
+                        chatRoomId: id,
+                        file: fileData,
+                        "chatType" : "SEND",
+                        "accessToken" : Cookies.get('accessToken')
+                    })
+                });
+            }
         } catch (error) {
             console.error('파일 처리 중 오류 발생:', error);
         }
         
         setIsPopupOpen(false);  // 팝업 닫기
-        console.log("확정된 파일들:", selectedFiles);
         setSelectedFiles([]);
     };
 

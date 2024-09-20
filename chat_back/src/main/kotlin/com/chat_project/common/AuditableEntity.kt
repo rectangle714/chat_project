@@ -9,8 +9,8 @@ import org.springframework.data.annotation.LastModifiedBy
 abstract class AuditableEntity(): BaseEntity() {
     @CreatedBy
     @Column(updatable = false)
-    var registerEmail: String? = null
+    var createdBy: String? = null
 
     @LastModifiedBy
-    var updateEmail: String? = null
+    var updatedBy: String? = null
 }

@@ -4,5 +4,6 @@ data class FileDTO(
     val fileName: String?,
     val fileData: String?,
     val fileType: String?,
-    val fileSize: Long?
+    val fileSize: Long?,
+    var storedFileName: String?
 )

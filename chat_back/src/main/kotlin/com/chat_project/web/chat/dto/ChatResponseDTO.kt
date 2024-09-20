@@ -7,5 +7,7 @@ data class ChatResponseDTO(
     var message: String = "",
     var sender: String = "",
     var registerDate: String = "",
-    var isAlert: String = ""
+    var isAlert: String = "",
+    var isFile: String = "",
+    var fileId: Long = 0
 )

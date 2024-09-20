@@ -28,6 +28,8 @@ class WebSocketConfig(
 
     override fun configureWebSocketTransport(registry: WebSocketTransportRegistration) {
         registry.setMessageSizeLimit(50 * 1024 * 1024)
+        registry.setSendBufferSizeLimit(50 * 1024 * 1024)
+        registry.setSendTimeLimit(20 * 10000)
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {

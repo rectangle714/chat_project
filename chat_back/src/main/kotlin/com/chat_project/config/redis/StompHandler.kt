@@ -41,17 +41,7 @@ import java.lang.IllegalArgumentException
 import java.util.*
 
 @Component
-class StompHandler(
-    private val tokenProvider: TokenProvider,
-    private val memberService: MemberService,
-    private val chatRoomService: ChatRoomService,
-    private val modelMapper: ModelMapper,
-    private val chatRoomMemberRepository: ChatRoomMemberRepository,
-    private val chatRepository: ChatRepository,
-    private val redisUtil: RedisUtil,
-    private val redisTemplate: StringRedisTemplate,
-    private val channelTopic: ChannelTopic,
-): ChannelInterceptor {
+class StompHandler(): ChannelInterceptor {
     val logger = logger()
 
     /* websocket 요청 전 처리 */

@@ -6,6 +6,7 @@ import com.chat_project.exception.CustomExceptionCode
 import com.chat_project.security.TokenProvider
 import com.chat_project.web.chat.dto.ChatRequestDTO
 import com.chat_project.web.chat.dto.FileDTO
+import com.chat_project.web.chat.entity.Files
 import com.chat_project.web.chat.repository.chat.ChatRepository
 import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
@@ -17,15 +18,9 @@ import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
-import java.util.logging.Logger
 
 @Service
 class FileService(
@@ -41,7 +36,7 @@ class FileService(
     private val modelMapper: ModelMapper,
     private val tokenProvider: TokenProvider
 ) {
-    private val uploadDir: Path = Paths.get("uploads")
+    private val uploadDir: Path = Paths.get("src/main/resources/static/uploads")
     private val logger = logger()
 
     init {
@@ -54,7 +49,7 @@ class FileService(
         if(fileDTO != null) {
             val user = tokenProvider.parseTokenInfo(chatRequestDTO.accessToken)
             val originFileName = fileDTO.fileName ?: "unknown"
-            val storedFileName = generateStoredFileName(originFileName)
+            val storedFileName = fileDTO.storedFileName
             val extension = originFileName.substringAfterLast('.', "")
 
             try {
@@ -62,7 +57,7 @@ class FileService(
                     ByteArrayInputStream(Base64.getDecoder().decode(it))
                 } ?: throw CustomException(CustomExceptionCode.BAD_FILE_INFO)
 
-                Files.newOutputStream(uploadDir.resolve(storedFileName)).use { outputStream ->
+                java.nio.file.Files.newOutputStream(uploadDir.resolve(storedFileName)).use { outputStream ->
                     decodedInputStream.copyTo(outputStream)
                 }
             } catch (error:Exception) {
@@ -74,14 +69,12 @@ class FileService(
         }
     }
 
-    fun getFile(storedFileName: String): InputStream {
-        val file: com.chat_project.web.chat.entity.Files = fileRepository.findByStoredFileName(storedFileName)
-            ?: throw RuntimeException("File not found")
-
-        return Files.newInputStream(uploadDir.resolve(file.storedFileName))
+    fun getFile(fileId: Long): Files {
+        return fileRepository.findById(fileId)
+            .orElseThrow { CustomException(CustomExceptionCode.BAD_FILE_INFO) }
     }
 
-    private fun generateStoredFileName(originFileName: String): String {
+    fun generateStoredFileName(originFileName: String): String {
         return UUID.randomUUID().toString()
     }
 }

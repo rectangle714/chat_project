@@ -30,9 +30,13 @@ class RedisSubscriber(
             val chatRequestDTO: ChatRequestDTO = objectMapper.readValue(publishMessage, ChatRequestDTO::class.java)
             val registerDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
 
+            var isFile: String = ""
+            chatRequestDTO.file?.let { isFile = "Y" }
+
             messagingTemplate.convertAndSend("/sub/chat/room/"+ chatRequestDTO.chatRoomId,
                                                 mapOf("sender" to chatRequestDTO.sender, "message" to chatRequestDTO.message
-                                                        , "registerDate" to registerDate, "isAlert" to chatRequestDTO.alert))
+                                                        , "registerDate" to registerDate, "isAlert" to chatRequestDTO.alert
+                                                        , "isFile" to isFile, "fileId" to chatRequestDTO.fileId))
         } catch(e: Exception) {
             logger.error("채팅 에러 발생 : {}",e.message)
         }

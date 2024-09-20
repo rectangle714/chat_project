@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper
 import com.chat_project.web.chat.entity.QChat.chat
 import com.chat_project.web.chat.entity.QChatRoom.chatRoom
 import com.chat_project.web.member.entity.QMember.member
+import com.chat_project.web.chat.entity.QFiles.files
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.core.types.dsl.StringTemplate
@@ -30,12 +31,15 @@ class ChatRepositoryImpl(
                     registerDate.`as`("registerDate"),
                     chatRoom.id.`as`("chatRoomId"),
                     member.nickname.`as`("sender"),
-                    chat.isAlert
+                    chat.isAlert,
+                    chat.isFile,
+                    files.id.`as`("fileId")
                 )
             )
             .from(chat)
             .join(chat.chatRoom, chatRoom)
             .join(chat.member, member)
+            .leftJoin(chat.file, files)
             .where(chat.chatRoom.id.eq(chatRoomId))
             .orderBy(chat.registerDate.asc())
             .fetch()

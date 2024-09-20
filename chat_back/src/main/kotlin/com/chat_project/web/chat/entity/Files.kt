@@ -1,6 +1,7 @@
 package com.chat_project.web.chat.entity
 
 import com.chat_project.common.AuditableEntity
+import com.chat_project.common.BaseEntity
 import jakarta.persistence.*
 import org.springframework.context.annotation.Description
 
@@ -11,7 +12,7 @@ class Files(
     fileType: String,
     fileSize: Long?,
     chat: Chat
-): AuditableEntity() {
+): BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
@@ -29,7 +30,7 @@ class Files(
     var fileType = fileType
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "chat_id")
     var chat = chat
 }
