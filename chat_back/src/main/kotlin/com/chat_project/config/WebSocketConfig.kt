@@ -11,7 +11,8 @@ import org.springframework.web.socket.config.annotation.*
 @EnableWebSocketMessageBroker
 class WebSocketConfig(
     private val stompHandler: StompHandler,
-    private val stompErrorHandler: StompErrorHandler
+    private val stompErrorHandler: StompErrorHandler,
+    private val agentWebSocketHandlerDecoratorFactory: AgentWebSocketHandlerDecoratorFactory
 ): WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry
@@ -27,9 +28,10 @@ class WebSocketConfig(
     }
 
     override fun configureWebSocketTransport(registry: WebSocketTransportRegistration) {
-        registry.setMessageSizeLimit(50 * 1024 * 1024)
-        registry.setSendBufferSizeLimit(50 * 1024 * 1024)
-        registry.setSendTimeLimit(20 * 10000)
+        registry.setDecoratorFactories(agentWebSocketHandlerDecoratorFactory)
+        registry.setMessageSizeLimit(160 * 64 * 1024)
+        registry.setSendTimeLimit(100 * 10000)
+        registry.setSendBufferSizeLimit(3 * 512 * 1024)
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
