@@ -34,6 +34,7 @@ const LoginForm = () => {
                      response.data.refreshToken, response.data.refreshTokenExpiration);
             navigate('/chatroom');
         } catch(error) {
+            alert(error);
             setValidation(error.response.data.message);
         }
     };
@@ -42,7 +43,7 @@ const LoginForm = () => {
         <>
             <div className="login-container">
                 <div className="login-form">
-                    <h2>Login</h2>
+                    <h2>로그인</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>

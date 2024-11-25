@@ -65,6 +65,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.12")
     testCompileOnly("org.projectlombok:lombok:1.18.12")
+    testImplementation("org.mockito:mockito-core:5.14.2")
 }
 
 // Querydsl 설정부 추가 - start

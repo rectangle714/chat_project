@@ -61,7 +61,8 @@ const ChatRoomList = ({chatRoomList}) => {
                         <li key={room.id} className="chat-room" onClick={
                             (e) => clickRoom(room.id, room.roomName, room.memberCount, room.numberPeople)
                         }>
-                            <img src='https://via.placeholder.com/50' alt={`${room.name} avatar`} />
+                            {/* <img src='https://via.placeholder.com/50' alt={`${room.name} avatar`} /> */}
+                            <span style={{width: '20px'}}></span>
                             <div className="chat-room-info">
                                 <h3>{room.roomName}</h3>
                                 <p className="last-message">{room.lastMessage}</p>

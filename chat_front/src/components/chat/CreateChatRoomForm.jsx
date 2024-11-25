@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
+import Paper from '@mui/material/Paper';
 import Layout from '@layout/Layout';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -8,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import api from '@stores/api';
-
+import { styled } from '@mui/material/styles';
 
 const CreateChatRoomForm = () => {
     const navigate = useNavigate();
@@ -16,7 +17,29 @@ const CreateChatRoomForm = () => {
     const [roomName, setRoomName] = useState('');
     const [numberPeople, setNumberPeople] = useState('');
     const [isRegister, setIsRegister] = useState(false);
+    const [imgFile, setImgFile] = useState([]);
     const { id } = useParams();
+
+    const uploadFile = (e) => {
+        e.preventDefault();
+
+    }
+
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
+
+    const handleFilesChange = (e) => {
+        setImgFile(e.target.files);
+    }
 
     /* 방 정보 생성 or 변경 */
     const createRoomBtn = async() => {
@@ -24,6 +47,7 @@ const CreateChatRoomForm = () => {
             alert('방 이름을 입력해주세요.');
             return false;
         }
+
         if(numberPeople === '') {
             alert('인원 수를 선택해주세요.');
             return false;
@@ -81,15 +105,13 @@ const CreateChatRoomForm = () => {
     const getMember = async() => {
         try {
             const response = await api.get('/api/member/info', null);
-            console.log('11', response);
+
             setMember((prevMember) => {
                 prevMember.email = response.data.email;
                 prevMember.nickname = response.data.nickname;
                 return prevMember;
             });
-            console.log('member ', member);
         } catch(error) {
-            console.log('error ', error);
             navigate('/login');
         }
     }
@@ -100,12 +122,10 @@ const CreateChatRoomForm = () => {
             const response = await api.get(`/api/chatRoom/${id}`);
             setRoomName(response.data.roomName);
             setNumberPeople(response.data.numberPeople);
-            console.log(member.email);
-            console.log(response.data.registerEmail);
+
             if(member.email == response.data.registerEmail) {
                 setIsRegister(true);
             }
-            console.log('response: ',response);
         } catch(error) {
             console.log('채팅방 정보 error: ', error);
         }

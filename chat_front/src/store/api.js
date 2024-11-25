@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 // Axios 인스턴스 생성
 const api = axios.create({
-    baseURL: 'http://localhost:30001',
+    baseURL: 'http://localhost:30003',
     headers: {
         "content-type": "application/json;charset=UTF-8",
     }
