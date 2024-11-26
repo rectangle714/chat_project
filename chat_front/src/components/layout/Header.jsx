@@ -13,12 +13,14 @@ const Header = ({loggedIn, handleLoginLogout}) => {
 
     return (
         <header>
-            <div className="header">
-                <h2 style={{cursor: 'pointer'}} onClick={() => navigate('/chatRoom')}>채팅</h2>
-                <button onClick={onClickLogout}>
-                    {accessToken ? '로그아웃' : '로그인'}
-                </button>
+            <div className="header" style={{backgroundColor: 'black'}}>
+            <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }} >
+                <h3 style={{color:'white', cursor:'pointer'}} onClick={() => navigate('/chatRoom')}>채팅 서비스</h3>
             </div>
+
+            <h2 className='user_name' onClick={() => navigate('/chatRoom')}>test</h2>
+            <button style={{marginLeft: '20px'}} onClick={onClickLogout}>로그아웃</button>
+        </div>
         </header>
     )
 }

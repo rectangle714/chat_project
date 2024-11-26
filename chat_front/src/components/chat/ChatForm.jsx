@@ -12,6 +12,7 @@ import attachImg from '@assets/images/attach.png'
 import sendImg from '@assets/images/send.png'
 import Cookies from 'js-cookie';
 import ReactDOM from 'react-dom';
+import Layout from '@layout/Layout';
 
 const ChatForm = () => {
     const URL = process.env.REACT_APP_API_URL;
@@ -25,6 +26,7 @@ const ChatForm = () => {
     const fileInputRef = useRef(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
+    const stompClientRef = useRef(null);
     const [textareaValue, setTextareaValue] = useState('');
     const [messages, setMessages] = useState([]);
     const [client, setClient] = useState(null);
@@ -42,8 +44,10 @@ const ChatForm = () => {
                 return prevMember;
             });
 
-            getChatting();
-            connection();
+            if(response) {    
+                getChatting();
+                connection();
+            }
         } catch(error) {
             console.log('error ', error);
             navigate('/login');
@@ -170,6 +174,7 @@ const ChatForm = () => {
             });
     
             clientData.activate();
+            stompClientRef.current = clientData;
             setClient(clientData);
         } catch(error) {
             console.log(error);
@@ -270,19 +275,19 @@ const ChatForm = () => {
 
     const handleChange = (e) => { setTextareaValue(e.target.value); };
 
+    /* 전송버튼 이벤트 */
+    const handleSendClick = (e) => {
+        e.preventDefault();
+        setTextareaValue('');
+        sendMessage(textareaValue);
+    }
+
     /* 퇴장 이벤트 */
     const handleExitClick = async(e) => {
         if(window.confirm('채팅방을 나가시겠습니까?')) {
             await disConnection();
             window.location.href = '/chatRoom';
         }
-    }
-
-    /* 전송버튼 이벤트 */
-    const handleSendClick = (e) => {
-        e.preventDefault();
-        setTextareaValue('');
-        sendMessage(textareaValue);
     }
 
     // 팝업 닫기 및 파일 전송
@@ -360,9 +365,16 @@ const ChatForm = () => {
 
     useEffect(() => {
         getMember();
+
+        return () => {
+            if(stompClientRef.current) {
+                disConnection();
+            }
+        };
     }, [])
 
     return (
+        <Layout>
         <div className="chat_wrap">
             <div className="header">
                     <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
@@ -377,15 +389,16 @@ const ChatForm = () => {
                         {messages.map((msg, index) => (
                             <li key={index} className={msg.LR_className}>
                                 {msg.LR_className != 'center' ?
-                                    <div className = 'sender'>
-                                        <span>{msg.senderName}</span>
+                                    <div>
+                                        <span className = 'sender'>{msg.senderName}</span> 
+                                        <span style={{fontSize:'13px'}}>{msg.registerDate}</span>
                                     </div> : ""
                                 }
-                                {msg.LR_className == 'right' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''}
+                                {/* {msg.LR_className == 'right' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
                                 <div className="message">
                                     <span>{msg.message}</span>
                                 </div>
-                                {msg.LR_className == 'left' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''}
+                                {/* {msg.LR_className == 'left' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
                             </li>
                         ))}
                     </ul>
@@ -394,6 +407,7 @@ const ChatForm = () => {
             </div>
             <div className="input-div">
                 <textarea
+                    className='textarea'
                     value={textareaValue}
                     onChange={handleChange}
                     onKeyDown={handleEnter}
@@ -438,6 +452,7 @@ const ChatForm = () => {
                 )}
             </div>
         </div>
+        </Layout>
     );
 };
 export default ChatForm;

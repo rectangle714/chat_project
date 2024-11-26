@@ -54,9 +54,6 @@ const ChatRoomForm = () => {
                             showFirstButton
                             showLastButton />
                     </Box>
-                    <div style={{textAlign:'right', paddingBottom:'20px'}}>
-                        <Button variant='contained' onClick={handleCreateChatRoomBtn}>방 생성</Button>
-                    </div>
                 </div>
             </div>
         </Layout>

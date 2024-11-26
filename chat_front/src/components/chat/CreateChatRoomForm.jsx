@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
-import Paper from '@mui/material/Paper';
 import Layout from '@layout/Layout';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -172,10 +171,13 @@ const CreateChatRoomForm = () => {
                             </FormControl>
                         </Box>
                     </div>
+                    <div>
+                        
+                    </div>
                     <div style={{textAlign:'right', paddingBottom:'20px', paddingTop:'20px'}}>
                         {id ?
                             <span><Button variant='contained' onClick={createRoomBtn}>변경</Button></span> : 
-                            <span><Button variant='contained' onClick={createRoomBtn}>방 생성</Button></span>
+                            <span><Button variant='contained' onClick={createRoomBtn}>생성</Button></span>
                         }
                         {id && isRegister == true ?
                             <span style={{paddingLeft:'10px'}}>

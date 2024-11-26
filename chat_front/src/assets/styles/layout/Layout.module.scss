@@ -1,7 +1,43 @@
-.layout{
-    height: 100%;
+.layout {
+    display: flex;
+    flex-direction: column; /* 전체를 세로로 나열 */
+    height: 100vh; /* 화면 전체 높이 */
 }
 
-.main{
-    height: 90%;
+.header {
+    height: 60px; /* 헤더 높이 */
+    background-color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.footer {
+    height: 50px; /* 푸터 높이 */
+    background-color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.body {
+    display: flex;
+    flex: 1; 
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 200px; 
+    border-right: 1px solid #ddd;
+    overflow-y: auto; 
+    box-sizing: border-box;
+}
+
+.main {
+    flex: 1; 
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f4f4f4;
 }
