@@ -4,6 +4,7 @@ import com.chat_project.common.util.logger
 import com.chat_project.exception.CustomExceptionCode
 import com.chat_project.security.TokenDTO
 import com.chat_project.web.member.dto.MemberDTO
+import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
 import com.chat_project.web.member.service.MemberService
 import io.swagger.v3.oas.annotations.Operation
@@ -54,19 +55,25 @@ class MemberController(
         }
     }
 
-    @Operation(method = "GET", summary = "사용자 정보 조회 API")
+    @Operation(method = "GET", summary = "로그인한 사용자 정보 조회 API")
     @GetMapping("/info")
-    fun info(@AuthenticationPrincipal user: User): ResponseEntity<MemberDTO>
+    fun memberInfo(@AuthenticationPrincipal user: User): ResponseEntity<MemberDTO>
         = memberService.getMemberInfo(user.username)
             .let { return ResponseEntity.status(HttpStatus.OK).body(it) }
 
     @Operation(method = "PUT", summary = "사용자 정보 수정 API")
     @PutMapping("/update")
-    fun update(memberDTO: MemberDTO): ResponseEntity<String>
+    fun updateMember(memberDTO: MemberDTO): ResponseEntity<String>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberDTO))
 
     @Operation(method = "DELETE", summary = "사용자 정보 삭제")
     @DeleteMapping("/delete")
-    fun delete(@AuthenticationPrincipal user: User): ResponseEntity<String>
+    fun deleteMember(@AuthenticationPrincipal user: User): ResponseEntity<String>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.deleteMember(user.username))
+
+    @Operation(method = "GET", summary = "이메일로 사용자 정보 조회 API")
+    @GetMapping("/info/email")
+    fun getInfoByEmail(@RequestParam email: String): ResponseEntity<MemberDTO>
+        = memberService.getMemberInfo(email)
+            .let { return ResponseEntity.status(HttpStatus.OK).body(it) }
 }

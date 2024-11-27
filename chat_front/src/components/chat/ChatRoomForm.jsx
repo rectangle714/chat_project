@@ -4,6 +4,7 @@ import ChatRoomList from './ChatRoomList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Pagination } from '@mui/material';
+import chatAddImg from '@assets/images/chat_add.svg'
 import api from '@stores/api';
 
 const ChatRoomForm = () => {
@@ -18,7 +19,7 @@ const ChatRoomForm = () => {
 
     const getChatRoomList = async() => {
         try {
-            const response = await api.get(`/api/chatRoom/list?page=${page-1}&size=${5}`, null);
+            const response = await api.get(`/api/chatRoom/list?page=${page-1}&size=${10}`, null);
             setChatRoomList(response.data.content);
             setTotalPage(response.data.totalPages);
         } catch(error) {
@@ -26,21 +27,17 @@ const ChatRoomForm = () => {
         }
     }
 
-    const handleCreateChatRoomBtn = () => {
-        navigate('/chatroom/create');
-    }
-
     useEffect(() => {
         getChatRoomList();
     }, [page])
-
 
     return (
         <Layout>
             <div className="chat-room-wrap">
                 <div className="chat-room-list">
                     <div className="chat-room-header">
-                        <h2>채팅방 목록</h2>
+                        <h2>채팅</h2> 
+                        <img src={chatAddImg} alt="Create Room" className="icon" />
                     </div>
                     <div>
                         <ChatRoomList chatRoomList = {chatRoomList}/>

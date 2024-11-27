@@ -1,6 +1,6 @@
 package com.chat_project.web.member
 
-import com.chat_project.common.constant.Role
+import com.chat_project.web.member.enums.Role
 import com.chat_project.config.QuerydslConfig
 import com.chat_project.web.TestBeanConfig
 import com.chat_project.web.chat.repository.chat.ChatRepository

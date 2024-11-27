@@ -1,6 +1,6 @@
 package com.chat_project.web.security
 
-import com.chat_project.common.constant.Role
+import com.chat_project.web.member.enums.Role
 import com.chat_project.web.member.entity.Member
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

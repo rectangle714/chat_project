@@ -26,7 +26,7 @@ class ChatRoomController(
     @GetMapping("/list")
     @Operation(method = "GET", summary = "채팅 목록 페이징 조회")
     fun pagingList(
-        @PageableDefault(page = 0, size = 5) pageable:Pageable
+        @PageableDefault(page = 0, size = 8) pageable:Pageable
     ): ResponseEntity<Page<ChatRoomResponseDTO>> {
         return ResponseEntity.ok(chatRoomService.getChatRoomListPaging(pageable))
     }

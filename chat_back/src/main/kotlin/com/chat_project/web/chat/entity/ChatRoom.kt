@@ -1,7 +1,6 @@
 package com.chat_project.web.chat.entity
 
 import com.chat_project.common.AuditableEntity
-import com.chat_project.common.BaseEntity
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment

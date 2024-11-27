@@ -1,4 +1,4 @@
-package com.chat_project.common.constant
+package com.chat_project.web.member.enums
 
 enum class Role(val key: String, val value : String) {
     USER("USER", "사용자"),

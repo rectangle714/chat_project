@@ -234,7 +234,7 @@ const ChatForm = () => {
     const sendMessage = async(message) => {
         if(message == '') { return false; }
 
-        if(Cookies.get('accessToken')) {
+        if(Cookies.get('accessToken') != '') {
             client.publish({
                 destination: '/pub/message',
                 body: JSON.stringify({

@@ -2,7 +2,7 @@ package com.chat_project.web.member.entity
 
 import com.chat_project.web.chat.entity.Chat
 import com.chat_project.common.BaseEntity
-import com.chat_project.common.constant.Role
+import com.chat_project.web.member.enums.Role
 import com.chat_project.web.chat.entity.ChatRoomMember
 import com.chat_project.web.member.dto.MemberDTO
 import com.fasterxml.jackson.annotation.JsonIgnore

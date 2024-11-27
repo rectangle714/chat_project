@@ -1,4 +1,4 @@
-package com.chat_project.common.constant
+package com.chat_project.web.chat.enums
 
 enum class ChatType(val description: String) {
     ENTER("채팅창 입장"),
