@@ -10,13 +10,19 @@ export const AuthProvider = ({ children }) => {
     const location = useLocation();
     const [accessToken, setAccessToken] = useState(Cookies.get('accessToken') || null);
     const [refreshToken, setRefreshToken] = useState(Cookies.get('refreshToken') || null);
+    const [userEmail, setUserEmail] = useState('');
 
     /* 로그인 */
-    const login = (accessToken, accessTokenExpired, refreshToken, refreshTokenExpired) => {
+    const login = (accessToken, accessTokenExpired, refreshToken, refreshTokenExpired, email) => {
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         Cookies.set('accessToken', accessToken, { expires: new Date(Date.now() + accessTokenExpired), path: '/' });
         Cookies.set('refreshToken', refreshToken, { expires: new Date(Date.now() + refreshTokenExpired), path: '/' });
+        
+
+        setTimeout(() => {
+            logout();
+        }, refreshTokenExpired);
     }
 
     /* 로그아웃 */
@@ -58,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ accessToken, refreshToken, login, logout, reissue }}>
+        <AuthContext.Provider value={{ accessToken, refreshToken, login, logout, reissue, userEmail }}>
             {children}
         </AuthContext.Provider>
     )

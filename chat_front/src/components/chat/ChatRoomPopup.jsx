@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import api from '@stores/api';
+import ChatRoomForm from './ChatRoomForm';
 import '@styles/chat/ChatRoomPopup.css';
 
 const ChatRoomPopup = ({ isOpen, onClose }) => {
@@ -30,7 +31,7 @@ const ChatRoomPopup = ({ isOpen, onClose }) => {
         }
     }
 
-    const handleCreateRoom = async() => {
+    const onClickCreateRoom = async() => {
         if(roomName === '') { 
             alert('방 이름을 입력해주세요.');
             return false;
@@ -49,7 +50,9 @@ const ChatRoomPopup = ({ isOpen, onClose }) => {
                     email: member.email
                 }
             });
+
             alert('채팅방이 생성 되었습니다.');
+            window.location.reload();
         } catch(e) {
             alert('채팅방 생성에 실패했습니다.');
             console.log(e);
@@ -103,7 +106,7 @@ const ChatRoomPopup = ({ isOpen, onClose }) => {
                         </FormControl>
                     </Box>
                 </div>
-                <button className="create-room-button" onClick={handleCreateRoom}>생성</button>
+                <button className="create-room-button" onClick={onClickCreateRoom}>생성</button>
             </div>
         </div>,
         document.body // 팝업을 최상위 레벨에 렌더링

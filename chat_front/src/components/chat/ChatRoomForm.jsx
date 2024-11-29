@@ -6,12 +6,19 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button, Pagination } from '@mui/material';
 import chatAddImg from '@assets/images/chat_add.svg'
 import api from '@stores/api';
+import ChatRoomPopup from './ChatRoomPopup';
 
 const ChatRoomForm = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [chatRoomList, setChatRoomList] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
 
     const handleChangePage = (event, newPage) => {
         setPage(page => page = newPage);

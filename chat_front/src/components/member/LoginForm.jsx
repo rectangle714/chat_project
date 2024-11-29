@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@stores/authProvider';
+import { useAuth } from '@stores/AuthProvider';
 import axios from 'axios';
 import '@styles/member/LoginForm.css';
 
@@ -31,7 +31,7 @@ const LoginForm = () => {
                 }
             });
             login(response.data.accessToken, response.data.accessTokenExpiration,
-                     response.data.refreshToken, response.data.refreshTokenExpiration);
+                     response.data.refreshToken, response.data.refreshTokenExpiration,  response.data.email);
             navigate('/chatroom');
         } catch(error) {
             alert(error);

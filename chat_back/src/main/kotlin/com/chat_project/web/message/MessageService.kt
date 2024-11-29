@@ -142,16 +142,20 @@ class MessageService(
                 chatRoomMemberRepository.delete(it)
             }
 
-        chatRepository.save(Chat("'${member.nickname}'님이 퇴장 했습니다.", member, chatRoom, "Y"))
-        redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(ChatRequestDTO::class.java)
-        redisTemplate.convertAndSend(
-            channelTopic.topic, ChatRequestDTO(
-                chatRoomId = chatRoom.id,
-                memberId = member.id,
-                alert = "Y",
-                message= "'${member.nickname}'님이 퇴장 했습니다.",
-                sender = member.nickname,
+        if(chatRoomMemberRepository.findByChatRoomId(chatRoom.id!!).isEmpty()) {
+            chatRoomRepository.delete(chatRoom)
+        } else {
+            chatRepository.save(Chat("'${member.nickname}'님이 퇴장 했습니다.", member, chatRoom, "Y"))
+            redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(ChatRequestDTO::class.java)
+            redisTemplate.convertAndSend(
+                channelTopic.topic, ChatRequestDTO(
+                    chatRoomId = chatRoom.id,
+                    memberId = member.id,
+                    alert = "Y",
+                    message= "'${member.nickname}'님이 퇴장 했습니다.",
+                    sender = member.nickname,
+                )
             )
-        )
+        }
     }
 }

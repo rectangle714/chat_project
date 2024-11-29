@@ -4,7 +4,7 @@ import '@styles/layout/SideBar.css';
 
 const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
     const navigate = useNavigate();
-    const [isMenuOpen, setIsMenuOpen] = useState({chat: false, friends: false});
+    const [isMenuOpen, setIsMenuOpen] = useState({chat: false, friends: false, notifications: false, admin: false});
     
     const toggleMenu = (menu) => {
         setIsMenuOpen(preState => ({
@@ -18,7 +18,7 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
             <aside className='sidebar'>
                 <div className="fixed-menu">
                     <h3 onClick={() => toggleMenu('chat')}>채팅</h3>
-                    <ul style={{display: isMenuOpen.chat ? 'none' : 'block'}}>
+                    <ul style={{display: isMenuOpen.chat ? 'block' : 'none'}}>
                         <li className="menu-item" onClick={() => {navigate('/chatRoom')}}>
                             <span className="menu-text">목록</span>
                         </li>
@@ -30,24 +30,30 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
 
                 <div className="fixed-menu">
                     <h3 onClick={() => toggleMenu('friends')}>친구</h3>
-                    <ul style={{display: isMenuOpen.friends ? 'none' : 'block'}}>
+                    <ul style={{display: isMenuOpen.friends ? 'block' : 'none'}}>
                         <li className="menu-item">
                             <span className="menu-text">목록</span>
                         </li>
                         <li className='menu-item' onClick={onFriendsPopup}>
                             <span className="menu-text">친구추가</span>
                         </li>
+                    </ul>
+                </div>
+
+                <div className="fixed-menu">
+                    <h3 onClick={() => toggleMenu('notifications')}>알림</h3>
+                    <ul style={{display: isMenuOpen.notifications ? 'block' : 'none'}}>
                         <li className='menu-item' onClick={onFriendsPopup}>
-                            <span className="menu-text">추가요청</span>
+                            <span className="menu-text">알림확인</span>
                         </li>
                     </ul>
                 </div>
 
                 <div className="fixed-menu">
-                    <h3 onClick={() => toggleMenu('friends')}>알림</h3>
-                    <ul style={{display: isMenuOpen.friends ? 'none' : 'block'}}>
+                    <h3 onClick={() => toggleMenu('admin')}>관리자</h3>
+                    <ul style={{display: isMenuOpen.admin ? 'block' : 'none'}}>
                         <li className='menu-item' onClick={onFriendsPopup}>
-                            <span className="menu-text">요청확인</span>
+                            <span className="menu-text">설정</span>
                         </li>
                     </ul>
                 </div>

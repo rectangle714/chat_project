@@ -44,7 +44,7 @@ class MemberService(
         val refreshTokenExpiration = tokenProvider.getTokenExpiration(refreshToken)
         redisUtil.setData(member.email, refreshToken, refreshTokenExpiration)
 
-        return TokenDTO(accessToken, refreshToken, accessTokenExpiration, refreshTokenExpiration)
+        return TokenDTO(accessToken, refreshToken, accessTokenExpiration, refreshTokenExpiration, email)
     }
 
     fun logout(email: String, token: String): String {
@@ -52,6 +52,7 @@ class MemberService(
         val expiration = tokenProvider.getTokenExpiration(parseToken)
         redisUtil.getData(email).takeIf { redisUtil.deleteData(email) }
         redisUtil.setData(parseToken, "logout", Instant.ofEpochMilli(expiration).toEpochMilli())
+
         return "success"
     }
 
@@ -65,11 +66,13 @@ class MemberService(
 
         val newToken = tokenProvider.createToken(tokenSubject, TokenType.ACCESS_TOKEN)
         val newTokenExpiration = tokenProvider.getTokenExpiration(newToken)
+
         return TokenDTO(newToken, "", newTokenExpiration, 0)
     }
 
     fun addMember(memberDTO: MemberDTO): String {
         memberRepository.save(Member.from(memberDTO, passwordEncoder))
+
         return "success"
     }
 
@@ -79,20 +82,22 @@ class MemberService(
             ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
         member.update(memberDTO, passwordEncoder)
         memberRepository.flush()
+
         return "success"
     }
 
     @Transactional(readOnly = true)
     fun getMemberInfo(email: String): MemberDTO {
-        val member: Member = memberRepository.findByEmail(email)
-                                ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
-        return modelMapper.map(member, MemberDTO::class.java).also { it.password = "" }
+        val member: Member? = memberRepository.findByEmail(email)
+
+        return modelMapper.map(member, MemberDTO::class.java)
     }
 
     fun deleteMember(email: String): String {
         val member: Member = memberRepository.findByEmail(email)
             ?: throw CustomException(CustomExceptionCode.NOT_FOUND_MEMBER)
         memberRepository.delete(member)
+
         return "success"
     }
 

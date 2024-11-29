@@ -5,4 +5,8 @@ import org.springframework.stereotype.Service
 @Service
 class FriendsService {
 
+    fun friendRequest(receiverId: Long) {
+
+    }
+
 }

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useAuth } from '@stores/authProvider';
+import { useAuth } from '@stores/AuthProvider';
 import api from '@stores/api';
 import moment from 'moment';
 import 'moment/locale/ko';

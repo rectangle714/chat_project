@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@stores/authProvider';
+import { useAuth } from '@stores/AuthProvider';
 import { IconButton } from "@mui/material";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import SockJS from 'sockjs-client';

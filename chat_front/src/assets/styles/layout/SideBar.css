@@ -16,8 +16,6 @@
     cursor: pointer;
 }
 
-
-
 .menu-item {
     display: flex;
     align-items: center;
@@ -30,4 +28,3 @@
 .menu-item:hover .menu-text {
     color: #007bff;  /* 마우스 오버 시 텍스트 색상 변경 */
 }
-

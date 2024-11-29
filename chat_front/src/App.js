@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '@stores/authProvider';
+import { AuthProvider } from '@stores/AuthProvider';
 import ChatForm from '@components/chat/ChatForm';
 import LoginForm from '@components/member/LoginForm';
 import ChatRoomForm from '@components/chat/ChatRoomForm';

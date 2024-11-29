@@ -19,27 +19,6 @@ const CreateChatRoomForm = () => {
     const [imgFile, setImgFile] = useState([]);
     const { id } = useParams();
 
-    const uploadFile = (e) => {
-        e.preventDefault();
-
-    }
-
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
-
-    const handleFilesChange = (e) => {
-        setImgFile(e.target.files);
-    }
-
     /* 방 정보 생성 or 변경 */
     const createRoomBtn = async() => {
         if(roomName === '') { 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import api from '@stores/api';
 import searchBtn from '@assets/images/search.svg'
+import { Button } from '@mui/material';
 import '@styles/friends/AddFriendsPopup.css';
 
 const AddFriendsPopup = ({ isOpen, onClose }) => {
@@ -19,7 +20,7 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
         try {
             const response = await api.get('/api/member/info/email', {params: {email: email}});
             setMessage({message: ''});
-            setReceiverId(response.memberId);
+            setReceiverId(response.data.memberId);
             setValidation(true);
         } catch(error) {
             setMessage({message: '존재하지 않는 이메일 입니다.', color:'red'});
@@ -35,6 +36,8 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
                     receiverId: receiverId
                 }
             })
+
+            console.log('response',response);
         } catch(error) {
             alert('친구 추가 요청에 실패했습니다.');
         }
@@ -55,13 +58,12 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
                         type="text"
                         className="room-name-input"
                         placeholder="이메일을 입력하세요"
-                        // value={roomName}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <img className='search' src={searchBtn} alt="search" onClick={emailValidation} />
                 </div>
                 <div style={{textAlign:'right', color: message.color}}>{message.message}</div>
-                <button onClick={addFriendsBtn} className="add-friend-button">추가</button>
+                <Button onClick={addFriendsBtn} variant="contained" disabled={!validation}>추가</Button>
             </div>
         </div>,
         document.body // 팝업을 최상위 레벨에 렌더링
