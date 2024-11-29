@@ -1,5 +1,4 @@
 import '@styles/layout/Header.css'
-import { jwtDecode } from "jwt-decode";
 import { useAuth } from '@stores/AuthProvider'
 import { useNavigate } from 'react-router-dom';
 
@@ -11,21 +10,6 @@ const Header = ({loggedIn, handleLoginLogout}) => {
         logout();
         navigate('/login');
     }
-
-    // JWT에서 이메일 추출
-    const getUserEmailFromToken = () => {
-        const token = localStorage.getItem("refreshToken");
-        if (!token) return null;
-
-        try {
-        const decoded = jwtDecode(token);
-        console.log('decoded ',decoded);
-        return decoded.email; // JWT의 payload에서 이메일 추출
-        } catch (error) {
-        console.error("Token decoding failed", error);
-        return null;
-        }
-    };
 
     return (
         <header>

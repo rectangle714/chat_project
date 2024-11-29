@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate, useLocation } from 'react-router-dom/dist';
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -51,9 +52,25 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    // JWT에서 이메일 추출
+    const getUserEmailFromToken = () => {
+        const token = Cookies.get("refreshToken");
+        if (!token) return null;
+
+        try {
+        const email = jwtDecode(token).sub.split(':')[0];
+        return email;
+        } catch (error) {
+        console.error("Token decoding failed", error);
+        return null;
+        }
+    };
+
     useEffect(() => {
         const accessToken = Cookies.get('accessToken');
         const refreshToken = Cookies.get('refreshToken');
+
+        setUserEmail(getUserEmailFromToken());
         
         if(location.pathname != '/login') {
             if(accessToken) {

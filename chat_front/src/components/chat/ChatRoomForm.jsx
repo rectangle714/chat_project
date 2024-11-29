@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button, Pagination } from '@mui/material';
 import chatAddImg from '@assets/images/chat_add.svg'
 import api from '@stores/api';
-import ChatRoomPopup from './ChatRoomPopup';
 
 const ChatRoomForm = () => {
     const navigate = useNavigate();
