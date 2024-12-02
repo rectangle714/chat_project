@@ -32,7 +32,7 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
     const addFriendsBtn = async() => {
         try {
             const response = await api.post('/api/friends/request', null, {
-                param : {
+                params : {
                     receiverId: receiverId
                 }
             })

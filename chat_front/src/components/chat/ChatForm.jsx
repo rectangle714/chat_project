@@ -375,83 +375,83 @@ const ChatForm = () => {
 
     return (
         <Layout>
-        <div className="chat_wrap">
-            <div className="header">
-                    <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
-                    <span style={{textAlign:'right'}}>
-                        <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
-                        <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/>
-                    </span>
-            </div>
-            <div className="chat">
-                <div className="chatformat">
-                    <ul style={{padding:'0px'}}>
-                        {messages.map((msg, index) => (
-                            <li key={index} className={msg.LR_className}>
-                                {msg.LR_className != 'center' ?
-                                    <div>
-                                        <span className = 'sender'>{msg.senderName}</span> 
-                                        <span style={{fontSize:'13px'}}>{msg.registerDate}</span>
-                                    </div> : ""
-                                }
-                                {/* {msg.LR_className == 'right' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
-                                <div className="message">
-                                    <span>{msg.message}</span>
-                                </div>
-                                {/* {msg.LR_className == 'left' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
-                            </li>
-                        ))}
-                    </ul>
-                    <div ref={chatEndRef}></div>
+            <div className="chat_wrap">
+                <div className="header">
+                        <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
+                        <span style={{textAlign:'right'}}>
+                            <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
+                            <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/>
+                        </span>
                 </div>
-            </div>
-            <div className="input-div">
-                <textarea
-                    className='textarea'
-                    value={textareaValue}
-                    onChange={handleChange}
-                    onKeyDown={handleEnter}
-                    style={{borderBottom: '1px solid black'}}
-                />
-                <div style={{textAlign:'right'}}>
-                    <span>
-                        <IconButton variant='contained' onClick={handleImageClick}>
-                            <img src={attachImg} alt='attach image' className={'attach_img'}/>
-                        </IconButton>
-                    </span>
-                    <span>
-                        <IconButton variant='contained' onClick={handleSendClick}>
-                            <img src={sendImg} alt='send image' className={'send_img'}/>
-                        </IconButton>
-                        <input
-                            type="file" 
-                            ref={fileInputRef} 
-                            style={{ display: 'none' }} 
-                            onChange={handleFileChange} 
-                        />
-                    </span>
-                </div>
-                {/* 팝업 창 */}
-                {isPopupOpen && ReactDOM.createPortal(
-                    <div className="popup-overlay">
-                        <div className="popup-content">
-                            <button className="close-popup" onClick={handleClosePopup}>X</button>
-                            <h2>파일 전송</h2>
-                            <div className="file-list">
-                            {selectedFiles.map((file, index) => (
-                                <div key={index} className="file-item">
-                                    <span className="file-name">{file.name}</span>
-                                    <button className="remove-button" onClick={() => handleRemoveFile(index)}>X</button>
-                                </div>
+                <div className="chat">
+                    <div className="chatformat">
+                        <ul style={{padding:'0px'}}>
+                            {messages.map((msg, index) => (
+                                <li key={index} className={msg.LR_className}>
+                                    {msg.LR_className != 'center' ?
+                                        <div>
+                                            <span className = 'sender'>{msg.senderName}</span> 
+                                            <span style={{fontSize:'13px'}}>{msg.registerDate}</span>
+                                        </div> : ""
+                                    }
+                                    {/* {msg.LR_className == 'right' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
+                                    <div className="message">
+                                        <span>{msg.message}</span>
+                                    </div>
+                                    {/* {msg.LR_className == 'left' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
+                                </li>
                             ))}
+                        </ul>
+                        <div ref={chatEndRef}></div>
+                    </div>
+                </div>
+                <div className="input-div">
+                    <textarea
+                        className='textarea'
+                        value={textareaValue}
+                        onChange={handleChange}
+                        onKeyDown={handleEnter}
+                        style={{borderBottom: '1px solid black'}}
+                    />
+                    <div style={{textAlign:'right'}}>
+                        <span>
+                            <IconButton variant='contained' onClick={handleImageClick}>
+                                <img src={attachImg} alt='attach image' className={'attach_img'}/>
+                            </IconButton>
+                        </span>
+                        <span>
+                            <IconButton variant='contained' onClick={handleSendClick}>
+                                <img src={sendImg} alt='send image' className={'send_img'}/>
+                            </IconButton>
+                            <input
+                                type="file" 
+                                ref={fileInputRef} 
+                                style={{ display: 'none' }} 
+                                onChange={handleFileChange} 
+                            />
+                        </span>
+                    </div>
+                    {/* 팝업 창 */}
+                    {isPopupOpen && ReactDOM.createPortal(
+                        <div className="popup-overlay">
+                            <div className="popup-content">
+                                <button className="close-popup" onClick={handleClosePopup}>X</button>
+                                <h2>파일 전송</h2>
+                                <div className="file-list">
+                                {selectedFiles.map((file, index) => (
+                                    <div key={index} className="file-item">
+                                        <span className="file-name">{file.name}</span>
+                                        <button className="remove-button" onClick={() => handleRemoveFile(index)}>X</button>
+                                    </div>
+                                ))}
+                                </div>
+                                <button className="confirm-button" onClick={handleConfirmFiles}>전송</button>
                             </div>
-                            <button className="confirm-button" onClick={handleConfirmFiles}>전송</button>
-                        </div>
-                    </div>,
-                    document.body  // 팝업을 최상위 레벨에 렌더링
-                )}
+                        </div>,
+                        document.body  // 팝업을 최상위 레벨에 렌더링
+                    )}
+                </div>
             </div>
-        </div>
         </Layout>
     );
 };

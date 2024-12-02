@@ -10,13 +10,11 @@ import com.chat_project.security.TokenType
 import com.chat_project.web.member.dto.MemberDTO
 import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
-import jakarta.validation.constraints.Email
 import org.modelmapper.ModelMapper
 import org.springframework.context.annotation.PropertySource
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.RequestParam
 import java.time.Instant
 import java.util.*
 

@@ -1,6 +1,5 @@
 .chatformat {
     min-height: 600px;
-    max-height: 600px;
     overflow: auto;
 }
 
@@ -105,7 +104,7 @@
 }
 
 .chat_wrap .input-div{
-    /* position: fixed; */
+    position: fixed;
     bottom: 0;
     width: 100%;
     background-color: #FFF;
@@ -241,4 +240,8 @@
     box-sizing: border-box;
     font-size: 16px;
     font-family: 'Arial', sans-serif;
+}
+
+.chat {
+    margin-bottom: 100px;
 }
