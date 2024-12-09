@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
                 setRefreshToken(refreshToken);
             }
         }
-    }, []);
+    }, [location.pathname]);
 
     return (
         <AuthContext.Provider value={{ accessToken, refreshToken, login, logout, reissue, userEmail }}>
