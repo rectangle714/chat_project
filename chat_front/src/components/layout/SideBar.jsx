@@ -22,9 +22,11 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
                         <li className="menu-item" onClick={() => {navigate('/chatRoom')}}>
                             <span className="menu-text">목록</span>
                         </li>
-                        <li className='menu-item' onClick={onChatPopup}>
+
+                        {/* 방 생성 이미지 클릭으로 변경 */}
+                        {/* <li className='menu-item' onClick={onChatPopup}>
                             <span className="menu-text">방생성</span>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
 

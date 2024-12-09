@@ -62,7 +62,7 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
                     />
                     <img className='search' src={searchBtn} alt="search" onClick={emailValidation} />
                 </div>
-                <div style={{textAlign:'right', color: message.color}}>{message.message}</div>
+                <div style={{textAlign:'right', color: message.color, paddingBottom: '40px'}}>{message.message}</div>
                 <Button onClick={addFriendsBtn} variant="contained" disabled={!validation}>추가</Button>
             </div>
         </div>,

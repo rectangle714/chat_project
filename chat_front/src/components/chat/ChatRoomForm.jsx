@@ -2,22 +2,19 @@ import '@styles/chat/ChatRoom.css'
 import Layout from '@layout/Layout';
 import ChatRoomList from './ChatRoomList';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Pagination } from '@mui/material';
+import { Box, Pagination } from '@mui/material';
 import chatAddImg from '@assets/images/chat_add.svg'
 import api from '@stores/api';
+import ChatRoomPopup from './ChatRoomPopup';
 
 const ChatRoomForm = () => {
-    const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [chatRoomList, setChatRoomList] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-
-    const handleClosePopup = () => {
-        setIsPopupOpen(false);
-    };
+    const chatOpen = () => setIsChatRoomPopupOpen(true);
+    const [isChatRoomPopupOpen, setIsChatRoomPopupOpen] = useState(false);
+    const chatClosePopup = () => setIsChatRoomPopupOpen(false);
 
     const handleChangePage = (event, newPage) => {
         setPage(page => page = newPage);
@@ -43,7 +40,7 @@ const ChatRoomForm = () => {
                 <div className="chat-room-list">
                     <div className="chat-room-header">
                         <h2>채팅</h2> 
-                        <img src={chatAddImg} alt="Create Room" className="icon" />
+                        <img src={chatAddImg} alt="Create Room" className="icon" onClick={chatOpen} />
                     </div>
                     <div>
                         <ChatRoomList chatRoomList = {chatRoomList}/>
@@ -57,6 +54,10 @@ const ChatRoomForm = () => {
                             showFirstButton
                             showLastButton />
                     </Box>
+                    <ChatRoomPopup 
+                        isOpen={isChatRoomPopupOpen}
+                        onClose={chatClosePopup}
+                    />
                 </div>
             </div>
         </Layout>

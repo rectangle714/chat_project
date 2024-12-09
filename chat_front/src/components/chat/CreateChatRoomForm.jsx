@@ -8,7 +8,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import api from '@stores/api';
-import { styled } from '@mui/material/styles';
 
 const CreateChatRoomForm = () => {
     const navigate = useNavigate();
