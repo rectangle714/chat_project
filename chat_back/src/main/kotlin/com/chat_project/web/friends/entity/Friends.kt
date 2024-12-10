@@ -1,22 +1,31 @@
 package com.chat_project.web.friends.entity
 
-import com.chat_project.common.AuditableEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
+import com.chat_project.web.friends.enums.FriendStatus
+import jakarta.persistence.*
+import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
 @Entity
 class Friends(
-    memberId: String
+    status: FriendStatus = FriendStatus.PENDING,
+    senderId: Long,
+    receiverId: Long
 ) {
     @Id @GeneratedValue
-    @Column(name = "friends_id")
-    var id:Long? = null
+    @Column(name = "friend_id")
+    var id: Long? = null
 
-    var memberId:Long? = null
+    @Enumerated(EnumType.STRING)
+    var status: FriendStatus = status
+        protected set
 
-    var addedAt:LocalDateTime = LocalDateTime.now()
+    @Comment("친구추가 요청한 사용자")
+    var senderId: Long = senderId
+        protected set
 
+    @Comment("친구추가 받는 사용자")
+    var receiverId: Long = receiverId
+        protected set
+
+    val requestAt:LocalDateTime = LocalDateTime.now()
 }

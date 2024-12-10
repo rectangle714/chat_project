@@ -11,16 +11,6 @@
     z-index: 1000;
 }
 
-.popup-content {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-
 .close-popup {
     position: absolute;
     top: 10px;

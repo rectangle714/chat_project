@@ -1,6 +1,6 @@
 import '@styles/chat/ChatRoom.css'
 import Layout from '@layout/Layout';
-import ChatRoomList from './ChatRoomList';
+import ChatRoomList from '@components/chat/ChatRoomList';
 import { useEffect, useState } from 'react';
 import { Box, Pagination } from '@mui/material';
 import chatAddImg from '@assets/images/chat_add.svg'

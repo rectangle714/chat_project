@@ -27,7 +27,6 @@ class TokenProvider(
     fun createToken(userInfo: String, tokenType: TokenType): String {
         val expiration: Long = if(tokenType == TokenType.ACCESS_TOKEN) accessTokenExpiration else refreshTokenExpiration * 60
 
-
         return Jwts.builder()
             .signWith(SecretKeySpec(secretKey.toByteArray(), SignatureAlgorithm.HS512.jcaName))
             .setSubject(userInfo)

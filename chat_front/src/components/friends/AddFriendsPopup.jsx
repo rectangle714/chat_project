@@ -37,7 +37,12 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
                 }
             })
 
-            console.log('response',response);
+            if(response.status == '200') {
+                alert('친구 추가 요청이 완료됐습니다.');
+                onClose();
+            } else {
+                alert('친구 추가 요청에 실패했습니다.');
+            }
         } catch(error) {
             alert('친구 추가 요청에 실패했습니다.');
         }

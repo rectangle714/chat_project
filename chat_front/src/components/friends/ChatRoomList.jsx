@@ -5,7 +5,7 @@ import api from '@stores/api';
 import moment from 'moment';
 import 'moment/locale/ko';
 
-const ChatRoomList = ({ chatRoomList }) => {
+const FriendsList = ({ chatRoomList }) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const { accessToken, reissue } = useAuth();
@@ -88,4 +88,4 @@ const ChatRoomList = ({ chatRoomList }) => {
     );
 }
 
-export default ChatRoomList
+export default FriendsList

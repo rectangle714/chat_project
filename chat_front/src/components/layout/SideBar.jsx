@@ -33,12 +33,14 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
                 <div className="fixed-menu">
                     <h3 onClick={() => toggleMenu('friends')}>친구</h3>
                     <ul style={{display: isMenuOpen.friends ? 'block' : 'none'}}>
-                        <li className="menu-item">
+                        <li className="menu-item" onClick={() => {navigate('/friends')}}>
                             <span className="menu-text">목록</span>
                         </li>
-                        <li className='menu-item' onClick={onFriendsPopup}>
+
+                        {/* 친구 추가 이미지 클릭으로 변경 */}
+                        {/* <li className='menu-item' onClick={onFriendsPopup}>
                             <span className="menu-text">친구추가</span>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
 
