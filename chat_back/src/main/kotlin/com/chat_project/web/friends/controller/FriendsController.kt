@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 class FriendsController(
     private val friendsService: FriendsService
 ) {
-    @GetMapping("/requests/list")
+    @GetMapping("/request/list")
     @Operation(summary = "친구 요청 목록")
     fun getFriendRequestList(): MutableList<FriendsRequestDTO> {
         return friendsService.getFriendRequestList();

@@ -33,7 +33,7 @@ class Member (
     var role = role
         protected set
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var chattings:MutableList<Chat> = ArrayList()
         protected set
 

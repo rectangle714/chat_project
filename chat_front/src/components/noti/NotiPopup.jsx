@@ -20,7 +20,7 @@ const NotiPopup = ({ isOpen, onClose }) => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/api/friends/requests/list');
+      const response = await api.get('/api/friends/request/list');
       setRequests(response.data); // 서버에서 요청 리스트 반환
     } catch (error) {
       console.error('Error fetching requests:', error);
@@ -30,13 +30,13 @@ const NotiPopup = ({ isOpen, onClose }) => {
   };
 
   const handleAccept = async (requestId) => {
-    // try {
-    //   await api.post(`/api/friends/requests/${requestId}/accept`);
-    //   setRequests((prev) => prev.filter((req) => req.id !== requestId)); // 요청 제거
-    //   alert('친구 요청을 수락했습니다.');
-    // } catch (error) {
-    //   console.error('Error accepting request:', error);
-    // }
+    try {
+      await api.post(`/api/friends/requests/${requestId}/accept`);
+      setRequests((prev) => prev.filter((req) => req.id !== requestId)); // 요청 제거
+      alert('친구 요청을 수락했습니다.');
+    } catch (error) {
+      console.error('Error accepting request:', error);
+    }
   };
 
   const handleReject = async (requestId) => {

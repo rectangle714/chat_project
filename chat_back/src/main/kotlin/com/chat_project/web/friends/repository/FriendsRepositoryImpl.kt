@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 
 import com.chat_project.web.member.entity.QMember.member
 import com.chat_project.web.friends.entity.QFriends.friends
+import com.chat_project.web.friends.enums.FriendStatus
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.DateTimeTemplate
 import com.querydsl.core.types.dsl.Expressions
@@ -29,7 +30,7 @@ class FriendsRepositoryImpl(
         ))
             .from(friends)
             .leftJoin(member).on(friends.senderId.eq(member.id))
-            .where(friends.receiverId.eq(receiverId))
+            .where(friends.receiverId.eq(receiverId).and(friends.status.eq(FriendStatus.PENDING)))
             .fetch()
     }
 }

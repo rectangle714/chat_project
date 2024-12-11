@@ -53,7 +53,7 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
 
     return ReactDOM.createPortal(
         <div className="popup-overlay">
-            <div className="popup-content">
+            <div className="popup-content" style={{textAlign:'center'}} >
                 <button className="close-popup" onClick={onClose}>
                     X
                 </button>
@@ -67,7 +67,7 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
                     />
                     <img className='search' src={searchBtn} alt="search" onClick={emailValidation} />
                 </div>
-                <div style={{textAlign:'right', color: message.color, paddingBottom: '40px'}}>{message.message}</div>
+                <div style={{textAlign:'center', color: message.color, paddingBottom: '40px'}}>{message.message}</div>
                 <Button onClick={addFriendsBtn} variant="contained" disabled={!validation}>추가</Button>
             </div>
         </div>,

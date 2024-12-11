@@ -37,6 +37,6 @@ class Chat(
     @JoinColumn(name = "chat_room_id")
     var chatRoom: ChatRoom = chatRoom
 
-    @OneToOne(mappedBy = "chat", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "chat", fetch = FetchType.LAZY)
     val file: Files? = null
 }
