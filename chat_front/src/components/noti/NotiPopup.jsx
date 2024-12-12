@@ -31,7 +31,7 @@ const NotiPopup = ({ isOpen, onClose }) => {
 
   const handleAccept = async (requestId) => {
     try {
-      await api.post(`/api/friends/requests/${requestId}/accept`);
+      await api.post(`/api/friends/request/${requestId}/accept`);
       setRequests((prev) => prev.filter((req) => req.id !== requestId)); // 요청 제거
       alert('친구 요청을 수락했습니다.');
     } catch (error) {

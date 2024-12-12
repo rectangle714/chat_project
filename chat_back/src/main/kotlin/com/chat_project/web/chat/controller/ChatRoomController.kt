@@ -35,7 +35,7 @@ class ChatRoomController(
     @Operation(method = "GET", summary = "채팅 목록 페이징 조회")
     fun getChatRoomInfo(@PathVariable chatRoomId: String): ResponseEntity<Optional<ChatRoom>> {
         return ResponseEntity.ok(chatRoomService.getChatRoomInfo(chatRoomId))
-    }
+    } 
 
     @PostMapping("/add")
     @Operation(method = "POST", summary = "채팅방 추가")

@@ -39,13 +39,18 @@ class MemberTest {
     }
 
     @Test
-    @Rollback(false)
+    @Rollback(value = false)
     fun 사용자_생성() {
-        memberRepository.save(
-            Member("aa", passwordEncoder.encode("123"), "테스트1", Role.USER)
-//            Member(TEST_ADMIN_EMAIL, passwordEncoder.encode("123"), "관리자", Role.ADMIN)
-//                    Member(TEST_USER_EMAIL, passwordEncoder.encode("123"), "사용자", Role.USER)
+        memberRepository.saveAll(
+            listOf(
+                Member(TEST_ADMIN_EMAIL, passwordEncoder.encode("123"), "관리자", Role.ADMIN),
+                Member(TEST_USER_EMAIL, passwordEncoder.encode("123"), "사용자", Role.USER)
+            )
         )
+//            Member("test", passwordEncoder.encode("123"), "테스트1", Role.USER)
+//            Member(TEST_ADMIN_EMAIL, passwordEncoder.encode("123"), "관리자", Role.ADMIN)
+//            Member(TEST_USER_EMAIL, passwordEncoder.encode("123"), "사용자", Role.USER)
+
 //        Assertions.assertNotNull(memberRepository.findByEmail(TEST_USER_EMAIL))
 //        Assertions.assertNotNull(memberRepository.findByEmail(TEST_ADMIN_EMAIL))
     }

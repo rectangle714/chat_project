@@ -7,7 +7,6 @@ import com.chat_project.web.friends.entity.Friends
 import com.chat_project.web.friends.enums.FriendStatus
 import com.chat_project.web.friends.repository.FriendsRepository
 import com.chat_project.web.friends.repository.FriendsRepositoryCustom
-import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 
