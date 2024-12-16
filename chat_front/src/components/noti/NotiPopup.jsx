@@ -10,18 +10,19 @@ const NotiPopup = ({ isOpen, onClose }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 요청 리스트 가져오기
   useEffect(() => {
     if (isOpen) {
       fetchRequests();
     }
   }, [isOpen]);
 
+  /* 요청 리스트 가져오기 */
   const fetchRequests = async () => {
     setLoading(true);
     try {
       const response = await api.get('/api/friends/request/list');
       setRequests(response.data); // 서버에서 요청 리스트 반환
+      console.log(requests);
     } catch (error) {
       console.error('Error fetching requests:', error);
     } finally {
@@ -29,24 +30,26 @@ const NotiPopup = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleAccept = async (requestId) => {
+  /* 수락 */
+  const handleAccept = async (senderId) => {
     try {
-      await api.post(`/api/friends/request/${requestId}/accept`);
-      setRequests((prev) => prev.filter((req) => req.id !== requestId)); // 요청 제거
+      await api.post(`/api/friends/request/${senderId}/accept`);
+      setRequests((prev) => prev.filter((req) => req.senderId !== senderId));
       alert('친구 요청을 수락했습니다.');
     } catch (error) {
       console.error('Error accepting request:', error);
     }
   };
 
-  const handleReject = async (requestId) => {
-    // try {
-    //   await api.post(`/api/friends/requests/${requestId}/reject`);
-    //   setRequests((prev) => prev.filter((req) => req.id !== requestId)); // 요청 제거
-    //   alert('친구 요청을 거절했습니다.');
-    // } catch (error) {
-    //   console.error('Error rejecting request:', error);
-    // }
+  /* 거절 */
+  const handleReject = async (senderId) => {
+    try {
+      await api.post(`/api/friends/request/${senderId}/reject`);
+      setRequests((prev) => prev.filter((req) => req.senderId !== senderId));
+      alert('친구 요청을 거절했습니다.');
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+    }
   };
 
   if (!isOpen) return null;

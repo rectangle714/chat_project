@@ -28,22 +28,22 @@ class MemberController(
 ) {
     val log = logger()
 
-    @Operation(method = "POST", summary = "사용자 회원가입", description = "사용자 회원가입 API")
+    @Operation(summary = "사용자 회원가입", description = "사용자 회원가입 API")
     @PostMapping("/signup")
     fun signUp(memberDTO: MemberDTO) : ResponseEntity<String>
          = ResponseEntity.status(HttpStatus.OK).body(memberService.addMember(memberDTO))
 
-    @Operation(method = "POST", summary = "사용자 로그인", description = "사용자 로그인 API")
+    @Operation(summary = "사용자 로그인", description = "사용자 로그인 API")
     @PostMapping("/login")
     fun login(email: String?, password: String?) : ResponseEntity<TokenDTO>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.login(email, password))
 
-    @Operation(method = "POST", summary = "사용자 로그아웃", description = "사용자 로그아웃 API")
+    @Operation(summary = "사용자 로그아웃", description = "사용자 로그아웃 API")
     @PostMapping("/logout")
     fun logout(@AuthenticationPrincipal user: User, @RequestHeader("Authorization") token: String): ResponseEntity<String>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.logout(user.username, token))
 
-    @Operation(method = "POST", summary = "토큰 재발급", description = "REFRESH 토큰 재발급 API")
+    @Operation(summary = "토큰 재발급", description = "REFRESH 토큰 재발급 API")
     @PostMapping("/reissue")
     fun reissue(@RequestHeader("REFRESH_TOKEN", required = false) refreshToken: String?): ResponseEntity<Any> {
         refreshToken?.let {
@@ -55,23 +55,23 @@ class MemberController(
         }
     }
 
-    @Operation(method = "GET", summary = "로그인한 사용자 정보 조회 API")
+    @Operation(summary = "로그인한 사용자 정보 조회 API")
     @GetMapping("/info")
     fun memberInfo(@AuthenticationPrincipal user: User): ResponseEntity<MemberDTO>
         = memberService.getMemberInfo(user.username)
             .let { return ResponseEntity.status(HttpStatus.OK).body(it) }
 
-    @Operation(method = "PUT", summary = "사용자 정보 수정 API")
+    @Operation(summary = "사용자 정보 수정 API")
     @PutMapping("/update")
     fun updateMember(memberDTO: MemberDTO): ResponseEntity<String>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberDTO))
 
-    @Operation(method = "DELETE", summary = "사용자 정보 삭제")
+    @Operation(summary = "사용자 정보 삭제")
     @DeleteMapping("/delete")
     fun deleteMember(@AuthenticationPrincipal user: User): ResponseEntity<String>
         = ResponseEntity.status(HttpStatus.OK).body(memberService.deleteMember(user.username))
 
-    @Operation(method = "GET", summary = "이메일로 사용자 정보 조회 API")
+    @Operation(summary = "이메일로 사용자 정보 조회 API")
     @GetMapping("/info/email")
     fun getInfoByEmail(@RequestParam email: String): ResponseEntity<MemberDTO>
         = memberService.getMemberInfo(email)

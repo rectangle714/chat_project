@@ -6,6 +6,7 @@ import { Box, Pagination } from '@mui/material';
 import chatAddImg from '@assets/images/chat_add.svg'
 import api from '@stores/api';
 import ChatRoomPopup from './ChatRoomPopup';
+import Chatbot from "@components/chatbot/Chatbot";
 
 const ChatRoomForm = () => {
     const [page, setPage] = useState(1);
@@ -58,6 +59,7 @@ const ChatRoomForm = () => {
                         isOpen={isChatRoomPopupOpen}
                         onClose={chatClosePopup}
                     />
+                    {/* <Chatbot /> */}
                 </div>
             </div>
         </Layout>

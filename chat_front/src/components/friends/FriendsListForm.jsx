@@ -1,5 +1,6 @@
 import 'moment/locale/ko';
-import { useState } from 'react';
+import api from '@stores/api';
+import { useEffect, useState } from 'react';
 import { Box, Pagination } from '@mui/material';
 import Layout from '@components/layout/Layout';
 import AddFriendsPopup from '@components/friends/AddFriendsPopup';
@@ -18,6 +19,15 @@ const FriendsListForm = () => {
     const handleChangePage = (event, newPage) => {
         setPage(page => page = newPage);
     }
+
+    const getFriendsList = async() => {
+        const response = await api.get('/api/friends/list')
+        setFriendsList(response.data);
+    }
+
+    useEffect(() => {
+        getFriendsList();
+    }, [])
 
     return (
         <Layout>

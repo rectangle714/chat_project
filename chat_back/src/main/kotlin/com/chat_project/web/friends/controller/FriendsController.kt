@@ -1,10 +1,12 @@
 package com.chat_project.web.friends.controller
 
+import com.chat_project.web.friends.dto.FriendsDTO
 import com.chat_project.web.friends.dto.FriendsRequestDTO
 import com.chat_project.web.friends.entity.Friends
 import com.chat_project.web.friends.service.FriendsService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -15,6 +17,14 @@ import org.springframework.web.bind.annotation.RestController
 class FriendsController(
     private val friendsService: FriendsService
 ) {
+
+    @GetMapping("/list")
+    @Operation(summary = "친구 리스트")
+    fun getFriendsList(): MutableList<FriendsDTO> {
+        return friendsService.getFriendsList();
+    }
+
+
     @GetMapping("/request/list")
     @Operation(summary = "친구 요청 목록")
     fun getFriendRequestList(): MutableList<FriendsRequestDTO> {
@@ -27,10 +37,24 @@ class FriendsController(
         friendsService.handleFriendRequest(receiverId);
     }
 
-    @PostMapping("/add")
-    @Operation(summary = "친구 추가")
-    fun addFriend(memberId: Long) {
+    @PostMapping("/request/{senderId}/accept")
+    @Operation(summary = "친구 추가 수락")
+    fun acceptRequest(@PathVariable("senderId") senderId: Long) {
+        friendsService.acceptRequest(senderId)
+    }
 
+    @PostMapping("/request/{senderId}/reject")
+    @Operation(summary = "친구 추가 거절")
+    fun rejectRequest(@PathVariable("senderId") senderId: Long) {
+        friendsService.rejectRequest(senderId)
+    }
+
+    @GetMapping("/request/check")
+    @Operation(summary = "이미 친구요청을 보낸 사용자인지 체크")
+    fun checkRequest(@RequestParam(value = "receiverId") receiverId: Long): Map<String, String> {
+        val requestStatus = friendsService.checkRequest(receiverId);
+
+        return mapOf("requestStatus" to requestStatus)
     }
 
 }

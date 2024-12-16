@@ -17,7 +17,6 @@ class Friends(
 
     @Enumerated(EnumType.STRING)
     var status: FriendStatus = status
-        protected set
 
     @Comment("친구추가 요청한 사용자")
     var senderId: Long = senderId

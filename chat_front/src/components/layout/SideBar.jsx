@@ -20,7 +20,10 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
                     <h3 onClick={() => toggleMenu('chat')}>채팅</h3>
                     <ul style={{display: isMenuOpen.chat ? 'block' : 'none'}}>
                         <li className="menu-item" onClick={() => {navigate('/chatRoom')}}>
-                            <span className="menu-text">목록</span>
+                            <span className="menu-text">개인채팅</span>
+                        </li>
+                        <li className="menu-item" onClick={() => {navigate('/chatRoom')}}>
+                            <span className="menu-text">오픈채팅</span>
                         </li>
 
                         {/* 방 생성 이미지 클릭으로 변경 */}
@@ -44,14 +47,14 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
                     </ul>
                 </div>
 
-                <div className="fixed-menu">
+                {/* <div className="fixed-menu">
                     <h3 onClick={() => toggleMenu('notifications')}>알림</h3>
                     <ul style={{display: isMenuOpen.notifications ? 'block' : 'none'}}>
                         <li className='menu-item' onClick={onFriendsPopup}>
                             <span className="menu-text">알림확인</span>
                         </li>
                     </ul>
-                </div>
+                </div> */}
 
                 <div className="fixed-menu">
                     <h3 onClick={() => toggleMenu('admin')}>관리자</h3>

@@ -1,9 +1,12 @@
 package com.chat_project.web.chat.service
 
+import com.chat_project.common.util.CommonUtil
 import com.chat_project.web.chat.dto.ChatRoomRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
+import com.chat_project.web.chat.entity.Chat
 import com.chat_project.web.chat.entity.ChatRoom
 import com.chat_project.web.chat.entity.ChatRoomMember
+import com.chat_project.web.chat.enums.RoomType
 import com.chat_project.web.chat.repository.chatRoom.ChatRoomRepository
 import com.chat_project.web.chat.repository.chatRoomMate.ChatRoomMemberRepository
 import com.chat_project.web.member.dto.MemberDTO
@@ -35,11 +38,35 @@ class ChatRoomService(
     }
 
     fun addChatRoom(chatRoomDTO: ChatRoomRequestDTO): String {
-        val chatRoom: ChatRoom = chatRoomRepository.save(modelMapper.map(chatRoomDTO, ChatRoom::class.java))
 
-        val member: Member? = memberRepository.findByEmail(chatRoomDTO.email)
-        val chatRoomMember: ChatRoomMember = ChatRoomMember(member, chatRoom)
-        chatRoomMemberRepository.save(chatRoomMember)
+        if(chatRoomDTO.roomType == "private") {
+
+            /* 채팅방 정보 입력 */
+            val chatRoom: ChatRoom = ChatRoom(
+                roomName = chatRoomDTO.roomName,
+                numberPeople = 2,
+                roomType = RoomType.PRIVATE
+            )
+            chatRoomRepository.save(chatRoom)
+
+            /* 채팅방 참여사용자 정보 입력 */
+            val loginMember: Member? = memberRepository.findByEmail(CommonUtil.getCurrentUserEmail())
+            val friend: Member? = memberRepository.findByEmail(chatRoomDTO.email)
+
+            val chatRoomMember: MutableList<ChatRoomMember> = mutableListOf(
+                ChatRoomMember(friend, chatRoom),
+                ChatRoomMember(loginMember, chatRoom)
+            )
+
+            chatRoomMemberRepository.saveAll(chatRoomMember);
+
+        } else {
+            val chatRoom: ChatRoom = chatRoomRepository.save(modelMapper.map(chatRoomDTO, ChatRoom::class.java))
+
+            val member: Member? = memberRepository.findByEmail(chatRoomDTO.email)
+            val chatRoomMember: ChatRoomMember = ChatRoomMember(member, chatRoom)
+            chatRoomMemberRepository.save(chatRoomMember)
+        }
         return "success"
     }
 

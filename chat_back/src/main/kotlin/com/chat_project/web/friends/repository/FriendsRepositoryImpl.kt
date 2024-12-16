@@ -1,6 +1,8 @@
 package com.chat_project.web.friends.repository
 
+import com.chat_project.web.friends.dto.FriendsDTO
 import com.chat_project.web.friends.dto.FriendsRequestDTO
+import com.chat_project.web.friends.entity.Friends
 import com.querydsl.jpa.impl.JPAQueryFactory
 
 import com.chat_project.web.member.entity.QMember.member
@@ -31,6 +33,36 @@ class FriendsRepositoryImpl(
             .from(friends)
             .leftJoin(member).on(friends.senderId.eq(member.id))
             .where(friends.receiverId.eq(receiverId).and(friends.status.eq(FriendStatus.PENDING)))
+            .fetch()
+    }
+
+    override fun findFriendsRequest(receiverId: Long, senderId: Long): Friends? {
+        return query.selectFrom(friends)
+            .where(
+                (friends.senderId.eq(senderId).and(friends.receiverId.eq(receiverId)))
+            )
+            .fetchOne()
+    }
+
+    override fun findFriendsList(memberId: Long): MutableList<FriendsDTO> {
+        return query
+            .select(
+                Projections.bean(
+                    FriendsDTO::class.java,
+                    Expressions.cases()
+                        .`when`(friends.senderId.eq(memberId)).then(friends.receiverId)
+                        .`when`(friends.receiverId.eq(memberId)).then(friends.senderId)
+                        .otherwise(-1L).`as`("friendsId"),
+                    member.email.`as`("friendsEmail")
+                )
+            )
+            .from(friends)
+            .join(member)
+            .on(
+                (friends.senderId.eq(memberId).and(member.id.eq(friends.receiverId)))
+                    .or(friends.receiverId.eq(memberId).and(member.id.eq(friends.senderId)))
+            )
+            .where(friends.status.eq(FriendStatus.ACCEPTED))
             .fetch()
     }
 }

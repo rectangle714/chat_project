@@ -7,15 +7,17 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
-class FriendsServiceTest(
-    private val friendsService: FriendsServiceTest
-) {
+class FriendsServiceTest {
+
+    private lateinit var friendsService: FriendsServiceTest
 
     @Test
     @Transactional
     fun 친구추가테스트() {
         // given
         verify {  }
+
+
     }
 
 }

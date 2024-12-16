@@ -29,7 +29,7 @@ class FriendsRepositoryTest {
         val status: FriendStatus = FriendStatus.ACCEPTED
 
         // when
-        val friends: Friends = friendsRepository
+        val friends: Friends? = friendsRepository
             .findByReceiverIdAndSenderIdAndStatus(
                 status = status,
                 receiverId = receiverId,

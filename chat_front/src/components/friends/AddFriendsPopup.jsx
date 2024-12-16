@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom';
 import api from '@stores/api';
 import searchBtn from '@assets/images/search.svg'
 import { Button } from '@mui/material';
+import { useAuth } from '@stores/AuthProvider';
 import '@styles/friends/AddFriendsPopup.css';
 
 const AddFriendsPopup = ({ isOpen, onClose }) => {
+    const { logout, userEmail } = useAuth();
     const [message, setMessage] = useState({message: '이메일을 입력해주세요.', color: 'red'});
     const [email, setEmail] = useState('');
     const [validation, setValidation] = useState(false);
@@ -17,15 +19,52 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
             return false;
         }
 
+        if(email === userEmail) {
+            setMessage({message: '자신의 아이디는 친구로 추가할 수 없습니다.', color:'red'});
+            return false;
+        }
+        
         try {
-            const response = await api.get('/api/member/info/email', {params: {email: email}});
-            setMessage({message: ''});
-            setReceiverId(response.data.memberId);
-            setValidation(true);
+            const memberInfoResponse = await api.get('/api/member/info/email', { params: {email: email}} );
+            const receiverId = memberInfoResponse.data.memberId;
+
+            try {
+                const checkFriendsResponse = await api.get('/api/friends/request/check', { params: { receiverId: receiverId } });
+
+                if(checkFriendsResponse.data.requestStatus == '') {
+                    setMessage({message: ''});
+                    setReceiverId(receiverId);
+                    setValidation(true);
+                } else if(checkFriendsResponse.data.requestStatus == 'PENDING') {
+                    setMessage({message: '추가 요청을 진행중인 사용자입니다.', color:'red'});
+                    setReceiverId(0);
+                    setValidation(false);
+                } else if(checkFriendsResponse.data.requestStatus == 'ACCEPTED') {
+                    setMessage({message: '이미 추가된 사용자입니다.', color:'red'});
+                    setReceiverId(0);
+                    setValidation(false);
+                } else if(checkFriendsResponse.data.requestStatus == 'REJECTED') {
+                    setMessage({message: ''});
+                    setReceiverId(receiverId);
+                    setValidation(true);
+                }
+            } catch(error) {
+                console.log(error);
+                setMessage({message: ''});
+                setReceiverId(0);
+                setValidation(false);
+            }
         } catch(error) {
             setMessage({message: '존재하지 않는 이메일 입니다.', color:'red'});
             setReceiverId(0);
             setValidation(false);
+        }
+    }
+
+    const onEnterEvent = (e) => {
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            emailValidation()
         }
     }
 
@@ -48,6 +87,13 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
         }
         
     }
+
+    useEffect(() => {
+        setEmail('');
+        setMessage({ message: '', color: 'black' });
+        setReceiverId(0);
+        setValidation(false);
+    }, [isOpen])
     
     if (!isOpen) return null;
 
@@ -64,6 +110,7 @@ const AddFriendsPopup = ({ isOpen, onClose }) => {
                         className="room-name-input"
                         placeholder="이메일을 입력하세요"
                         onChange={(e) => setEmail(e.target.value)}
+                        onKeyDown={(e) => onEnterEvent(e)}
                     />
                     <img className='search' src={searchBtn} alt="search" onClick={emailValidation} />
                 </div>

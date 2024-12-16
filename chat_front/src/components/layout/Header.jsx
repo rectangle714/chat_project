@@ -9,9 +9,7 @@ import logoutImg from '@assets/images/logout.svg';
 const Header = () => {
   const { logout, userEmail } = useAuth();
   const navigate = useNavigate();
-
   const [ isOpen, setIsOpen ] = useState(false);
-  
   const [ onClose, setClose ] = useState(false);
 
   const onClosePopup = () => {
