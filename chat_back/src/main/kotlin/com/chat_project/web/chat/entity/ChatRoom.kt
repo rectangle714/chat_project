@@ -25,6 +25,7 @@ class ChatRoom(
         protected set
 
     @Comment("채팅창 구분(개인채팅, 오픈채팅)")
+    @Enumerated(EnumType.STRING)
     var roomType: RoomType = roomType
         protected set
 

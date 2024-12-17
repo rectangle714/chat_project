@@ -33,6 +33,7 @@ const ChatForm = () => {
     const { id } = useParams();
     const location = useLocation();
     const roomName = location.state.roomName ? location.state.roomName : '';
+    const roomType = location.state.roomType ? location.state.roomType : '';
 
     /* 사용자 정보 조회 */
     const getMember = async() => {
@@ -286,7 +287,7 @@ const ChatForm = () => {
     const handleExitClick = async(e) => {
         if(window.confirm('채팅방을 나가시겠습니까?')) {
             await disConnection();
-            window.location.href = '/chatRoom';
+            window.location.href = '/chatRoom/public';
         }
     }
 
@@ -365,13 +366,18 @@ const ChatForm = () => {
 
     useEffect(() => {
         getMember();
+        setMessages([]);
 
         return () => {
-            if(stompClientRef.current) {
+            if(roomType != 'private' && stompClientRef.current) {
                 disConnection();
+            } else {
+                if(null != client) {
+                    client.deactivate()
+                }
             }
         };
-    }, [])
+    }, [roomName])
 
     return (
         <Layout>
@@ -380,7 +386,7 @@ const ChatForm = () => {
                         <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
                         <span style={{textAlign:'right'}}>
                             <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
-                            <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/>
+                            {roomType == 'private' ? '' : <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/>}
                         </span>
                 </div>
                 <div className="chat">

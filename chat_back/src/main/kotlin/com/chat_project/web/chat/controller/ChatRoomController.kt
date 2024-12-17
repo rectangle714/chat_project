@@ -3,6 +3,7 @@ package com.chat_project.web.chat.controller
 import com.chat_project.web.chat.dto.ChatRoomRequestDTO
 import com.chat_project.web.chat.dto.ChatRoomResponseDTO
 import com.chat_project.web.chat.entity.ChatRoom
+import com.chat_project.web.chat.enums.RoomType
 import com.chat_project.web.chat.service.ChatRoomService
 import com.chat_project.web.member.service.MemberService
 import io.swagger.v3.oas.annotations.Operation
@@ -26,9 +27,10 @@ class ChatRoomController(
     @GetMapping("/list")
     @Operation(method = "GET", summary = "채팅 목록 페이징 조회")
     fun pagingList(
-        @PageableDefault(page = 0, size = 8) pageable:Pageable
+        @PageableDefault(page = 0, size = 10) pageable:Pageable,
+        roomType: String
     ): ResponseEntity<Page<ChatRoomResponseDTO>> {
-        return ResponseEntity.ok(chatRoomService.getChatRoomListPaging(pageable))
+        return ResponseEntity.ok(chatRoomService.getChatRoomListPaging(pageable, roomType))
     }
 
     @GetMapping("/{chatRoomId}")

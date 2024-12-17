@@ -1,51 +1,57 @@
-import "moment/locale/ko";
-import api from "@stores/api";
+import "@styles/chat/ChatRoom.css";
+import Layout from "@layout/Layout";
+import ChatRoomList from "@components/chat/ChatRoomList";
 import { useEffect, useState } from "react";
-import { Box, Pagination, CircularProgress } from "@mui/material";
-import Layout from "@components/layout/Layout";
-import AddFriendsPopup from "@components/friends/AddFriendsPopup";
-import FriendsList from "@components/friends/FriendsList";
-import friendsAddImg from "@assets/images/friends_add.svg";
+import { Box, Pagination } from "@mui/material";
+import chatAddImg from "@assets/images/chat_add.svg";
+import api from "@stores/api";
+import ChatRoomPopup from "./ChatRoomPopup";
 
-const FriendsListForm = () => {
+const PrivateChatRoomForm = () => {
   const [page, setPage] = useState(1);
-  const [friendsList, setFriendsList] = useState([]);
+  const [chatRoomList, setChatRoomList] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
-  const [isChatRoomPopupOpen, setIsChatRoomPopupOpen] = useState(false);
+
   const chatOpen = () => setIsChatRoomPopupOpen(true);
+  const [isChatRoomPopupOpen, setIsChatRoomPopupOpen] = useState(false);
   const chatClosePopup = () => setIsChatRoomPopupOpen(false);
 
   const handleChangePage = (event, newPage) => {
     setPage((page) => (page = newPage));
   };
 
-  const getFriendsList = async () => {
-    const response = await api.get(
-      `/api/friends/list?page=${page - 1}&size=${10}`
-    );
-    setFriendsList(response.data.content);
-    setTotalPage(response.data.totalPages);
+  const getChatRoomList = async () => {
+    try {
+      const response = await api.get(
+        `/api/chatRoom/list?page=${page - 1}&size=${10}&roomType=private`,
+        null
+      );
+      setChatRoomList(response.data.content);
+      setTotalPage(response.data.totalPages);
+    } catch (error) {
+      console.log("채팅방 조회 실패 ", error);
+    }
   };
 
   useEffect(() => {
-    getFriendsList();
+    getChatRoomList();
   }, [page]);
 
   return (
-    <>
+    <Layout>
       <div className="chat-room-wrap">
         <div className="chat-room-list">
           <div className="chat-room-header">
-            <h2>친구</h2>
+            <h2>개인채팅</h2>
             <img
-              src={friendsAddImg}
-              alt="Add friends"
+              src={chatAddImg}
+              alt="Create Room"
               className="icon"
               onClick={chatOpen}
             />
           </div>
           <div>
-            <FriendsList friendsList={friendsList} />
+            <ChatRoomList chatRoomList={chatRoomList} />
           </div>
           <Box display="flex" justifyContent="center" marginTop={2}>
             <Pagination
@@ -57,14 +63,14 @@ const FriendsListForm = () => {
               showLastButton
             />
           </Box>
-          <AddFriendsPopup
+          <ChatRoomPopup
             isOpen={isChatRoomPopupOpen}
             onClose={chatClosePopup}
           />
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 
-export default FriendsListForm;
+export default PrivateChatRoomForm;

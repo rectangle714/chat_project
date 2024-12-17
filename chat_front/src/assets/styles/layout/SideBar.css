@@ -28,3 +28,48 @@
 .menu-item:hover .menu-text {
     color: #007bff;  /* 마우스 오버 시 텍스트 색상 변경 */
 }
+
+/* 팝업 컨테이너 */
+.window-controls {
+    position: relative;
+    background-color: #fff;    /* 흰색 배경 */
+    border-radius: 8px;        /* 모서리 둥글게 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    width: 400px;              /* 팝업 너비 */
+    min-height: 300px;         /* 최소 높이 */
+    flex-direction: column;    /* 세로 정렬 */
+    overflow: hidden;          /* 내용이 넘치지 않도록 */
+}
+
+/* 윈도우 컨트롤 버튼 영역 */
+.window-controls > .control {
+    display: inline-block;
+    text-align: right;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;         /* 수직 중앙 정렬 */
+    text-align: center;        /* 가로 중앙 정렬 */
+    font-size: 16px;
+    color: gray;               /* 버튼 색상 */
+    cursor: pointer;           /* 마우스 커서 변경 */
+    transition: background 0.3s ease;
+    margin: 5px;               /* 버튼 여백 */
+    border-radius: 3px;
+}
+
+.window-controls > .control:hover {
+    background: #d3d3d3;       /* hover 시 배경색 변경 */
+}
+
+.control.close:hover {
+    background: #d3d3d3;
+    cursor: pointer;
+}
+
+/* FriendsListForm 내부 요소 스타일 */
+.window-controls > div {
+    flex: 1;                   /* 나머지 영역 채우기 */
+    padding: 15px;
+    overflow-y: auto;          /* 내용이 많으면 스크롤 */
+    box-sizing: border-box;    /* 패딩 포함 크기 유지 */
+}

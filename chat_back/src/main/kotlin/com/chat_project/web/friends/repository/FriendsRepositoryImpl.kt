@@ -12,6 +12,9 @@ import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.DateTimeTemplate
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.StringTemplate
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 
 class FriendsRepositoryImpl(
@@ -44,8 +47,37 @@ class FriendsRepositoryImpl(
             .fetchOne()
     }
 
-    override fun findFriendsList(memberId: Long): MutableList<FriendsDTO> {
-        return query
+    override fun findFriendsList(pageable: Pageable , memberId: Long): Page<FriendsDTO> {
+
+        val friendsList: MutableList<FriendsDTO> = query
+            .select(
+                Projections.bean(
+                    FriendsDTO::class.java,
+                    Expressions.cases()
+                        .`when`(friends.senderId.eq(memberId)).then(friends.receiverId)
+                        .`when`(friends.receiverId.eq(memberId)).then(friends.senderId)
+                        .otherwise(-1L).`as`("friendsId"),
+                    Expressions.cases()
+                        .`when`(friends.senderId.eq(memberId)).then(friends.receiverId)
+                        .`when`(friends.receiverId.eq(memberId)).then(friends.senderId)
+                        .otherwise(-1L).`as`("friendsId"),
+                    member.email.`as`("friendsEmail"),
+                    member.nickname.`as`("chatRoomName"),
+                    friends.chatRoom.id.`as`("chatRoomId")
+                )
+            )
+            .from(friends)
+            .join(member)
+            .on(
+                (friends.senderId.eq(memberId).and(member.id.eq(friends.receiverId)))
+                    .or(friends.receiverId.eq(memberId).and(member.id.eq(friends.senderId)))
+            )
+            .where(friends.status.eq(FriendStatus.ACCEPTED))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        val totalCount: Long = query
             .select(
                 Projections.bean(
                     FriendsDTO::class.java,
@@ -63,6 +95,10 @@ class FriendsRepositoryImpl(
                     .or(friends.receiverId.eq(memberId).and(member.id.eq(friends.senderId)))
             )
             .where(friends.status.eq(FriendStatus.ACCEPTED))
-            .fetch()
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch().size.toLong()
+
+        return PageImpl(friendsList, pageable, totalCount)
     }
 }

@@ -5,6 +5,9 @@ import com.chat_project.web.friends.dto.FriendsRequestDTO
 import com.chat_project.web.friends.entity.Friends
 import com.chat_project.web.friends.service.FriendsService
 import io.swagger.v3.oas.annotations.Operation
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,11 +22,10 @@ class FriendsController(
 ) {
 
     @GetMapping("/list")
-    @Operation(summary = "친구 리스트")
-    fun getFriendsList(): MutableList<FriendsDTO> {
-        return friendsService.getFriendsList();
+    @Operation(summary = "친구 목록 페이징 조회")
+    fun getFriendsList(@PageableDefault(page = 0, size = 10) pageable: Pageable ): Page<FriendsDTO> {
+        return friendsService.getFriendsList(pageable);
     }
-
 
     @GetMapping("/request/list")
     @Operation(summary = "친구 요청 목록")

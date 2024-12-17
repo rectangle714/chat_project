@@ -22,7 +22,6 @@ const NotiPopup = ({ isOpen, onClose }) => {
     try {
       const response = await api.get('/api/friends/request/list');
       setRequests(response.data); // 서버에서 요청 리스트 반환
-      console.log(requests);
     } catch (error) {
       console.error('Error fetching requests:', error);
     } finally {
@@ -95,7 +94,7 @@ const NotiPopup = ({ isOpen, onClose }) => {
         )}
       </div>
     </div>,
-    document.body
+    document.getElementById('portal-root')
   );
 };
 

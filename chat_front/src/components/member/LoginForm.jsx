@@ -32,7 +32,7 @@ const LoginForm = () => {
             });
             login(response.data.accessToken, response.data.accessTokenExpiration,
                      response.data.refreshToken, response.data.refreshTokenExpiration,  response.data.email);
-            navigate('/chatroom');
+            navigate('/chatroom/public');
         } catch(error) {
             alert(error);
             setValidation(error.response.data.message);

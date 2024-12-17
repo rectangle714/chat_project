@@ -28,8 +28,8 @@ class ChatRoomService(
     private val chatRoomMemberRepository: ChatRoomMemberRepository
 ) {
     @Transactional(readOnly = true)
-    fun getChatRoomListPaging(pageable: Pageable): Page<ChatRoomResponseDTO> {
-        return chatRoomRepository.getChatRoomList(pageable)
+    fun getChatRoomListPaging(pageable: Pageable, roomType: String): Page<ChatRoomResponseDTO> {
+        return chatRoomRepository.getChatRoomList(pageable, roomType)
     }
 
     @Transactional(readOnly = true)
@@ -40,7 +40,6 @@ class ChatRoomService(
     fun addChatRoom(chatRoomDTO: ChatRoomRequestDTO): String {
 
         if(chatRoomDTO.roomType == "private") {
-
             /* 채팅방 정보 입력 */
             val chatRoom: ChatRoom = ChatRoom(
                 roomName = chatRoomDTO.roomName,
@@ -61,7 +60,9 @@ class ChatRoomService(
             chatRoomMemberRepository.saveAll(chatRoomMember);
 
         } else {
-            val chatRoom: ChatRoom = chatRoomRepository.save(modelMapper.map(chatRoomDTO, ChatRoom::class.java))
+            val chatRoom: ChatRoom = chatRoomRepository.save(
+                ChatRoom( roomName = chatRoomDTO.roomName, numberPeople = chatRoomDTO.numberPeople )
+            )
 
             val member: Member? = memberRepository.findByEmail(chatRoomDTO.email)
             val chatRoomMember: ChatRoomMember = ChatRoomMember(member, chatRoom)

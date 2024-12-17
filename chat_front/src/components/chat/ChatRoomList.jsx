@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from '@stores/AuthProvider';
+import { CircularProgress } from '@mui/material';
 import api from '@stores/api';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -8,7 +9,6 @@ import 'moment/locale/ko';
 const ChatRoomList = ({ chatRoomList }) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
-    const { accessToken, reissue } = useAuth();
     moment.locale('ko');
 
     /* 사용자가 채팅방에 참여했는지 체크 */
@@ -48,7 +48,7 @@ const ChatRoomList = ({ chatRoomList }) => {
     }
 
     useEffect(() => {
-        if (chatRoomList && chatRoomList.length >= 0) {
+        if (chatRoomList && chatRoomList.length > 0) {
             setIsLoading(false);
         }
     }, [chatRoomList])
@@ -56,8 +56,10 @@ const ChatRoomList = ({ chatRoomList }) => {
     return (
         <>
             <ul>
-                {chatRoomList.length > 0 ? (
-                    chatRoomList.map(room => (
+                {isLoading ? (
+                    <div className="loading-container">
+                        <CircularProgress />
+                    </div> ) : chatRoomList.length > 0 ? ( chatRoomList.map(room => (
                         <li key={room.id} className="chat-room" onClick={
                             (e) => clickRoom(room.id, room.roomName, room.memberCount, room.numberPeople)
                         }>

@@ -10,7 +10,6 @@ const Header = () => {
   const { logout, userEmail } = useAuth();
   const navigate = useNavigate();
   const [ isOpen, setIsOpen ] = useState(false);
-  const [ onClose, setClose ] = useState(false);
 
   const onClosePopup = () => {
     setIsOpen(false);
@@ -23,7 +22,7 @@ const Header = () => {
 
   return (
     <header className="header-container">
-      <div className="header-left" onClick={() => navigate('/chatRoom')}>
+      <div className="header-left" onClick={() => navigate('/chatRoom/public')}>
         <h3 className="logo">채팅 서비스</h3>
       </div>
 
