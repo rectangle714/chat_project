@@ -1,8 +1,7 @@
 import "moment/locale/ko";
 import api from "@stores/api";
 import { useEffect, useState } from "react";
-import { Box, Pagination, CircularProgress } from "@mui/material";
-import Layout from "@components/layout/Layout";
+import { Box, Pagination } from "@mui/material";
 import AddFriendsPopup from "@components/friends/AddFriendsPopup";
 import FriendsList from "@components/friends/FriendsList";
 import friendsAddImg from "@assets/images/friends_add.svg";

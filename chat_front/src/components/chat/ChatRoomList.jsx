@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useAuth } from '@stores/AuthProvider';
 import { CircularProgress } from '@mui/material';
 import api from '@stores/api';
 import moment from 'moment';

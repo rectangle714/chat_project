@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@stores/AuthProvider';
+import { useAuth } from '@context/AuthProvider';
 import { IconButton } from "@mui/material";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import SockJS from 'sockjs-client';
@@ -142,6 +142,7 @@ const ChatForm = () => {
 
     /* 웹소켓 연결 */
     const connection = () => {
+
         try{
             const socket = new SockJS(`${URL}/ws`);
             
@@ -385,8 +386,8 @@ const ChatForm = () => {
                 <div className="header">
                         <span style={{flex:2, fontWeight: 'bold'}}>{roomName}</span>
                         <span style={{textAlign:'right'}}>
-                            <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/>
-                            {roomType == 'private' ? '' : <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/>}
+                            {roomType == 'private' ? '' : <img src={settingImg} alt='setting image' onClick={handleSettingClick} className={'setting_img'}/> }
+                            {roomType == 'private' ? '' : <img src={logoutImg} alt='logout image' onClick={handleExitClick} className={'logout_img'}/> }
                         </span>
                 </div>
                 <div className="chat">
@@ -397,14 +398,22 @@ const ChatForm = () => {
                                     {msg.LR_className != 'center' ?
                                         <div>
                                             <span className = 'sender'>{msg.senderName}</span> 
-                                            <span style={{fontSize:'13px'}}>{msg.registerDate}</span>
                                         </div> : ""
                                     }
-                                    {/* {msg.LR_className == 'right' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
                                     <div className="message">
                                         <span>{msg.message}</span>
                                     </div>
-                                    {/* {msg.LR_className == 'left' ? <span style={{fontSize:'13px'}}>{msg.registerDate}</span> : ''} */}
+                                    {['right', 'left'].includes(msg.LR_className) && (
+                                        <div>
+                                            <span style={{ 
+                                                fontSize: '13px', 
+                                                paddingLeft: msg.LR_className === 'left' ? '12px' : '0',
+                                                paddingRight: msg.LR_className === 'right' ? '12px' : '0'
+                                            }}>
+                                                {msg.registerDate}
+                                            </span>
+                                        </div>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -454,7 +463,7 @@ const ChatForm = () => {
                                 <button className="confirm-button" onClick={handleConfirmFiles}>전송</button>
                             </div>
                         </div>,
-                        document.body  // 팝업을 최상위 레벨에 렌더링
+                        document.getElementById('portal-root')  // 팝업을 최상위 레벨에 렌더링
                     )}
                 </div>
             </div>

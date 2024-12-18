@@ -41,4 +41,8 @@ class Friends(
         this.status = status
         this.chatRoom = chatRoom
     }
+
+    fun updateStatusPending(status: FriendStatus) {
+        this.status = status
+    }
 }

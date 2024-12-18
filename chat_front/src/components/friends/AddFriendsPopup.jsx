@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import api from '@stores/api';
 import searchBtn from '@assets/images/search.svg'
 import { Button } from '@mui/material';
-import { useAuth } from '@stores/AuthProvider';
+import { useAuth } from '@context/AuthProvider';
 import '@styles/friends/AddFriendsPopup.css';
 
 const AddFriendsPopup = ({ isOpen, onClose }) => {

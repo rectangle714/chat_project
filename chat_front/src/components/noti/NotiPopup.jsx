@@ -8,7 +8,7 @@ import '@styles/noti/NotiPopup.css';
 
 const NotiPopup = ({ isOpen, onClose }) => {
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
@@ -18,7 +18,6 @@ const NotiPopup = ({ isOpen, onClose }) => {
 
   /* 요청 리스트 가져오기 */
   const fetchRequests = async () => {
-    setLoading(true);
     try {
       const response = await api.get('/api/friends/request/list');
       setRequests(response.data); // 서버에서 요청 리스트 반환
@@ -55,8 +54,10 @@ const NotiPopup = ({ isOpen, onClose }) => {
 
   return ReactDOM.createPortal(
     <div className="popup-overlay">
-      <div className="popup-content">
-        <button className="close-popup" onClick={onClose}>X</button>
+      <div className="window-controls">
+        <div style={{textAlign:'right', paddingBottom: '5px', paddingTop: '5px'}}>
+          <span className="control close" onClick={onClose}>&times;</span>
+        </div>
         <h2 style={{textAlign:'center'}}>알림 목록</h2>
         {loading ? (
           <div className="loading-container">

@@ -5,6 +5,7 @@ import com.chat_project.common.BaseEntity
 import com.chat_project.web.member.enums.Role
 import com.chat_project.web.chat.entity.ChatRoomMember
 import com.chat_project.web.member.dto.MemberDTO
+import com.chat_project.web.notification.entity.Notification
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -41,6 +42,9 @@ class Member (
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var chatRoomMember:MutableList<ChatRoomMember> = mutableListOf()
         protected set
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var notification:MutableList<Notification> = mutableListOf()
 
     companion object{
         fun from(memberDTO: MemberDTO, encoder: BCryptPasswordEncoder) = Member(

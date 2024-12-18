@@ -16,6 +16,7 @@ import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -26,7 +27,8 @@ class FriendsService(
     private val memberRepository: MemberRepository,
     private val friendsRepository: FriendsRepository,
     private val chatRoomRepository: ChatRoomRepository,
-    private val chatRoomMemberRepository: ChatRoomMemberRepository
+    private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val messageTemplate: SimpMessageSendingOperations
 ) {
 
     @Transactional(readOnly = true)
@@ -56,10 +58,27 @@ class FriendsService(
     fun handleFriendRequest(receiverId: Long) {
         val senderEmail: String = CommonUtil.getCurrentUserEmail()
         val sender = memberRepository.findByEmail(senderEmail)
+            ?: throw IllegalStateException("사용자를 찾을 수 없습니다.: $senderEmail")
 
-        sender?.let {
-            friendsRepository.save(Friends(status = FriendStatus.PENDING, senderId = it.id, receiverId = receiverId))
+        val friends = friendsRepository.findByReceiverIdAndSenderIdAndStatus(
+            receiverId, sender.id, FriendStatus.REJECTED
+        )
+
+        if (friends != null) {
+            friends.updateStatusPending(FriendStatus.PENDING)
+            friendsRepository.save(friends)
+        } else {
+            friendsRepository.save(
+                Friends(
+                    status = FriendStatus.PENDING,
+                    senderId = sender.id,
+                    receiverId = receiverId
+                )
+            )
         }
+
+        val receiverEmail: String = memberRepository.findById(receiverId).get().email
+        messageTemplate.convertAndSend("/sub/notification/${receiverEmail}", "친구요청 알림")
     }
 
     @Transactional(readOnly = true)
@@ -93,13 +112,6 @@ class FriendsService(
                 roomType = RoomType.PRIVATE
             ))
 
-            friends = friendsRepository
-                .findByReceiverIdAndSenderIdAndStatus(
-                    senderId= senderId,
-                    receiverId = it.id,
-                    status = FriendStatus.PENDING
-                )
-
             val joinMember: List<ChatRoomMember> =
                 listOf(
                     ChatRoomMember(receiver, chatRoom),
@@ -108,11 +120,15 @@ class FriendsService(
                     chatRoomMemberRepository.saveAll(it)
                 } ?: throw RuntimeException("ChatRoomMember 등록 중 에러 발생.")
 
-            friends?.let {
-                it.updateStatusAccepted(FriendStatus.ACCEPTED, chatRoom)
-                friendsRepository.save(it)
-            } ?: throw NullPointerException("존재하지 않는 사용자 입니다.")
-
+            friendsRepository
+                .findByReceiverIdAndSenderIdAndStatus(
+                    senderId= senderId,
+                    receiverId = it.id,
+                    status = FriendStatus.PENDING
+                ) ?. let {
+                    it.updateStatusAccepted(FriendStatus.ACCEPTED, chatRoom)
+                    friendsRepository.save(it)
+                } ?: throw NullPointerException("존재하지 않는 사용자 입니다.")
         } ?: throw NullPointerException("요청자를 찾을 수 없습니다.")
     }
 
@@ -121,17 +137,15 @@ class FriendsService(
         var friends:Friends?
 
         sender?.let {
-            friends = friendsRepository
+            friendsRepository
                 .findByReceiverIdAndSenderIdAndStatus(
                     senderId= senderId,
                     receiverId = it.id,
                     status = FriendStatus.PENDING
-                )
-
-            friends?.let {
-                it.updateStatusAccepted(FriendStatus.REJECTED, null)
-                friendsRepository.save(it)
-            } ?: throw  NullPointerException("존재하지 않는 사용자 입니다.")
-        } ?: throw NullPointerException("요청자를 찾을 수 없습니다.")
+                ) ?.let {
+                    it.updateStatusAccepted(FriendStatus.REJECTED, null)
+                    friendsRepository.save(it)
+                } ?: throw  NullPointerException("존재하지 않는 사용자 입니다.")
+            } ?: throw NullPointerException("요청자를 찾을 수 없습니다.")
     }
 }

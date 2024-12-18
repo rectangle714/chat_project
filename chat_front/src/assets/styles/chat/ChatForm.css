@@ -86,6 +86,7 @@
 
 .chat_wrap .chat ul li div > span.sender{
     margin: 0px 5px;
+    padding-right: 6px;
     font-weight: bold;
 }
 

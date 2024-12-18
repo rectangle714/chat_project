@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@stores/AuthProvider';
+import { useAuth } from '@context/AuthProvider';
 import axios from 'axios';
 import '@styles/member/LoginForm.css';
 

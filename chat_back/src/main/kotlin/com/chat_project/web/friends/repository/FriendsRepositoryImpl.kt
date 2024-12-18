@@ -57,11 +57,8 @@ class FriendsRepositoryImpl(
                         .`when`(friends.senderId.eq(memberId)).then(friends.receiverId)
                         .`when`(friends.receiverId.eq(memberId)).then(friends.senderId)
                         .otherwise(-1L).`as`("friendsId"),
-                    Expressions.cases()
-                        .`when`(friends.senderId.eq(memberId)).then(friends.receiverId)
-                        .`when`(friends.receiverId.eq(memberId)).then(friends.senderId)
-                        .otherwise(-1L).`as`("friendsId"),
                     member.email.`as`("friendsEmail"),
+                    member.nickname.`as`("friendsNickname"),
                     member.nickname.`as`("chatRoomName"),
                     friends.chatRoom.id.`as`("chatRoomId")
                 )

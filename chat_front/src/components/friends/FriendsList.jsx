@@ -1,17 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { usePopup } from "@context/PopupProvider";
 import moment from "moment";
 import "moment/locale/ko";
 
 const FriendsList = ({ friendsList }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const { closeFriendsPopup } = usePopup();
   moment.locale("ko");
 
   /* 친구 클릭 이벤트 */
   const clickFriend = (chatRoomId, chatRoomName) => {
     navigate(`/chat/${chatRoomId}`, {state: {'roomName' : chatRoomName, 'roomType' : 'private'}});
+    closeFriendsPopup();
   };
 
   useEffect(() => {
@@ -32,7 +35,7 @@ const FriendsList = ({ friendsList }) => {
             <li key={friends.friendsId} className="chat-room" onClick={() => clickFriend(friends.chatRoomId, friends.chatRoomName)}>
               <span style={{ width: "20px" }}></span>
               <div className="chat-room-info">
-                <h3>{friends.friendsEmail}</h3>
+                <h3>{friends.friendsNickname}</h3>
               </div>
               <p
                 className="last-message"

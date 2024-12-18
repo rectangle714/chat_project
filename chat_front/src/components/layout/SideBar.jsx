@@ -1,13 +1,14 @@
-import { Fragment, useState} from 'react';
 import ReactDOM from 'react-dom';
+import { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import FriendsListForm from '@components/friends/FriendsListForm';
+import { usePopup } from '@context/PopupProvider';
 import '@styles/layout/SideBar.css';
-import FriendsListForm from '../friends/FriendsListForm';
 
-const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
+const Sidebar = () => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState({chat: false, friends: false, notifications: false, admin: false});
-    const [isFriendsPopupOpen, setIsFriendsPopupOpen] = useState(false);
+    const { isFriendsPopupOpen, openFriendsPopup, closeFriendsPopup } = usePopup();
     
     const toggleMenu = (menu) => {
         setIsMenuOpen(preState => ({
@@ -15,9 +16,6 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
             [menu]: !preState[menu]
         }));
     }
-
-    const openFriendsPopup = () => setIsFriendsPopupOpen(true);
-    const closeFriendsPopup = () => setIsFriendsPopupOpen(false);
 
     return (
         <>
@@ -43,7 +41,7 @@ const Sidebar = ({ onChatPopup, onFriendsPopup }) => {
                 <div className="fixed-menu">
                     <h3 onClick={() => toggleMenu('admin')}>관리자</h3>
                     <ul style={{display: isMenuOpen.admin ? 'block' : 'none'}}>
-                        <li className='menu-item' onClick={onFriendsPopup}>
+                        <li className='menu-item' onClick={openFriendsPopup}>
                             <span className="menu-text">설정</span>
                         </li>
                     </ul>
