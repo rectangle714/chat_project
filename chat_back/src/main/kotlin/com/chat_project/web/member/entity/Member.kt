@@ -45,6 +45,7 @@ class Member (
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var notification:MutableList<Notification> = mutableListOf()
+        protected set
 
     companion object{
         fun from(memberDTO: MemberDTO, encoder: BCryptPasswordEncoder) = Member(

@@ -14,6 +14,10 @@ import com.chat_project.web.friends.enums.FriendStatus
 import com.chat_project.web.friends.repository.FriendsRepository
 import com.chat_project.web.member.entity.Member
 import com.chat_project.web.member.repository.MemberRepository
+import com.chat_project.web.notification.entity.Notification
+import com.chat_project.web.notification.enums.NotiStatus
+import com.chat_project.web.notification.enums.NotiType
+import com.chat_project.web.notification.repository.NotificationRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.messaging.simp.SimpMessageSendingOperations
@@ -28,6 +32,7 @@ class FriendsService(
     private val friendsRepository: FriendsRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val notificationRepository: NotificationRepository,
     private val messageTemplate: SimpMessageSendingOperations
 ) {
 
@@ -77,8 +82,18 @@ class FriendsService(
             )
         }
 
-        val receiverEmail: String = memberRepository.findById(receiverId).get().email
-        messageTemplate.convertAndSend("/sub/notification/${receiverEmail}", "친구요청 알림")
+        val receiver: Member = memberRepository.findById(receiverId)
+            .orElseThrow( { throw RuntimeException("존재하지 않는 사용자 입니다.")})
+
+        notificationRepository.save(
+            Notification(
+                "친구 신청 요청이 도착했습니다.",
+                NotiStatus.UNREAD,
+                NotiType.FRIENDS_REQUEST,
+                receiver
+            )
+        )
+        messageTemplate.convertAndSend("/sub/notification/${receiver.email}", "친구요청 알림")
     }
 
     @Transactional(readOnly = true)

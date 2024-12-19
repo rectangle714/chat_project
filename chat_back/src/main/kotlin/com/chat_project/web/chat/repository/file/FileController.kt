@@ -13,7 +13,6 @@ import java.net.URLEncoder
 @RestController
 @RequestMapping("/api/file")
 class FileController(
-    private val fileRepository: FileRepository,
     private val fileService: FileService
 ) {
     val logger = logger()
