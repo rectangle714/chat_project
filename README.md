@@ -1,3 +1,5 @@
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/679674de-669d-48ba-b1d9-8790ae11c8d7" />
+
 # ChatWave 💬
 
 **실시간 커뮤니케이션이 가능한 채팅 서비스**로, 1:1 및 그룹 채팅을 지원합니다.  
