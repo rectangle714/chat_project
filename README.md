@@ -1,6 +1,4 @@
-<img width="0536" height="5024" alt="Image" src="https://github.com/user-attachments/assets/679674de-669d-48ba-b1d9-8790ae11c8d7" />
-
-# ChatWave
+<h1 align="center">ChatWave</h1>
 
 **실시간 커뮤니케이션이 가능한 채팅 서비스**로, 1:1 및 그룹 채팅을 지원합니다.  
 JWT 기반 인증, WebSocket을 활용한 메시지 송수신, Redis 기반 메시지 브로커를 통해 안정성과 확장성을 고려한 구조로 설계되었습니다.
