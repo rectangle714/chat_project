@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/679674de-669d-48ba-b1d9-8790ae11c8d7" />
+<img width="0536" height="5024" alt="Image" src="https://github.com/user-attachments/assets/679674de-669d-48ba-b1d9-8790ae11c8d7" />
 
 # ChatWave 💬
 
